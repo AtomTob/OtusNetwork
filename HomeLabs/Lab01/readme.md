@@ -214,3 +214,6 @@ Vlan1 is up, line protocol is up
 100 МБит/сек
 
 ###### Шаг 2.
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab01/files/Screenshot_3.png?raw=true)
+
+###### Шаг 3.
