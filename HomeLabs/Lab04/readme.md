@@ -256,6 +256,7 @@ e. С PC-B отправьте эхо-запрос на локальный адр
 
 2001:db8:acad::/64
 
+##
 
 Файл проекта по лабораторной работе [здесь](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab04/files/Lab_IPv6.pkt)
 
