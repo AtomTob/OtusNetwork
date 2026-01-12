@@ -49,6 +49,9 @@ S1#sh sdm prefer
 #### Часть 1.
 В шагах 1 и 2 настроены коммутатор и роутер: настроено имя узла и основные параметры устройства.
 
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab04/files/lab04.png?raw=true "Созданная схема")
+
+
 ##
 
 #### Часть 2.
