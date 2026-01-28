@@ -18,4 +18,12 @@
 #### Часть 1. Настройка основных параметров устройств
 ##### Шаг 1. Создайте сеть согласно топологии
 
-![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab05/files/Screenshot_1.png?raw=true "Схема сети")
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab05/files/Jpg01.png?raw=true "Схема сети")
+
+##
+##### Шаг 2. Выполните инициализацию и перезагрузку маршрутизатора и коммутатора.
+
+На устройствах на схеме первоначальная конфигурация.
+
+##
+##### Шаг 3. Настройте маршрутизатор.
