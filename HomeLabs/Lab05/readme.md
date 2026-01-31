@@ -103,6 +103,27 @@ The name for the keys will be: R1.home.local
 % Generating 2048 bit RSA keys, keys will be non-exportable...[OK]<br>
 *Mar 1 1:11:46.86: %SSH-5-ENABLED: SSH 1.99 has been enabled<br>
 
+R1(config)#ip ssh version 2
+
+##
+##### Шаг 3. Создайте имя пользователя в локальной базе учетных записей.
+
+> Настройте имя пользователя, используя admin в качестве имени пользователя и Adm1nP@55 в качестве пароля.
+
+R1(config)#username admin privilege 15 secret Adm1nP@55 
+
+##
+##### Шаг 4. Активируйте протокол SSH на линиях VTY.
+
+> a.	Активируйте протоколы Telnet и SSH на входящих линиях VTY с помощью команды transport input.
+
+R1(config-line)#transport input telnet ssh<br>
+                                      ^
+% Invalid input detected at '^' marker.<br>
+	
+R1(config-line)#transport input all<br>
+
+Т.к. в Cisco Packet Tracer не применяется команда активации обоих протоколов, то включаем все, что некорретно с точки зрения сетевой безопасности.
 
 
 
