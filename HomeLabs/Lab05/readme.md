@@ -115,16 +115,25 @@ R1(config)#username admin privilege 15 secret Adm1nP@55
 ##
 ##### Шаг 4. Активируйте протокол SSH на линиях VTY.
 
-> a.	Активируйте протоколы Telnet и SSH на входящих линиях VTY с помощью команды transport input.
+> a.	Активируйте протоколы Telnet и SSH на входящих линиях VTY с помощью команды transport input.<br>
+> b.	Измените способ входа в систему таким образом, чтобы использовалась проверка пользователей по локальной базе учетных записей.
 
-R1(config-line)#transport input telnet ssh<br>
-                                      ^
-% Invalid input detected at '^' marker.<br>
-	
+R1(config)#line vty 0 15<br>
 R1(config-line)#transport input all<br>
+R1(config-line)#login local 
 
-Т.к. в Cisco Packet Tracer не применяется команда активации обоих протоколов, то включаем все, что некорретно с точки зрения сетевой безопасности.
+> Т.к. в Cisco Packet Tracer не применяется команда активации обоих протоколов, то включаем все, что некорретно с точки зрения сетевой безопасности.
 
+##
+##### Шаг 5. Сохраните текущую конфигурацию в файл загрузочной конфигурации.
 
+R1#wr<br>
+Building configuration...<br>
+[OK]
+
+##
+##### Шаг 6. Установите соединение с маршрутизатором по протоколу SSH.
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab05/files/SSH_Connect.png?raw=true "Проверка подключения")
 
 
