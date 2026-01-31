@@ -395,8 +395,11 @@ Vlan1                  unassigned      YES unset  administratively down down
 
 > b.	Отправьте эхо-запрос с PC-A на PC-B.
 
+#### Чтобы я не делал - запросы до РС-В не проходят, прошу помощи в решении.
 
 > c.	Отправьте команду ping с компьютера PC-A на коммутатор S2.
 
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab06/files/Ping_S2.png?raw=true)
+
+
 
