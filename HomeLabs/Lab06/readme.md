@@ -347,12 +347,12 @@ R1(config-subif)#ip add 192.168.10.1 255.255.255.0
 
 R1(config)#int g0/1.20
 R1(config-subif)#encap dot 20
-R1(config-subif)#desc SubInterface 20
+R1(config-subif)#desc SubInterface20
 R1(config-subif)#ip add 192.168.20.1 255.255.255.0
 
 R1(config)#int g0/1.30
 R1(config-subif)#enc dot 30
-R1(config-subif)#desc SubInterface 30
+R1(config-subif)#desc SubInterface30
 R1(config-subif)#ip add 192.168.30.1 255.255.255.0
 R1(config-subif)#ex
 R1(config)#int g0/1.20
@@ -360,5 +360,43 @@ R1(config)#int g0/1.20
 R1(config)#int g0/1.1000
 R1(config-subif)#desc NativeVLAN_1000
 R1(config-subif)#encap dot 1000 native
+
+
+R1#sh run
+!
+interface GigabitEthernet0/1.1000
+ description NativeVLAN_1000
+ encapsulation dot1Q 1000 native
+ no ip address
+!
 ```
+
+> c.	Убедитесь, что вспомогательные интерфейсы работают.
+
+```
+R1#sh ip int br
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0     unassigned      YES unset  administratively down down 
+GigabitEthernet0/1     unassigned      YES unset  up                    up 
+GigabitEthernet0/1.10  192.168.10.1    YES manual up                    up 
+GigabitEthernet0/1.20  192.168.20.1    YES manual up                    up 
+GigabitEthernet0/1.30  192.168.30.1    YES manual up                    up 
+GigabitEthernet0/1.1000unassigned      YES unset  up                    up 
+Vlan1                  unassigned      YES unset  administratively down down
+```
+
+##
+#### Часть 5. Проверьте, работает ли маршрутизация между VLAN
+##### Шаг 1. Выполните следующие тесты с PC-A. Все должно быть успешно.
+
+> a.	Отправьте эхо-запрос с PC-A на шлюз по умолчанию.
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab06/files/Ping_Gate1.png?raw=true "Ping Gateway1")
+
+> b.	Отправьте эхо-запрос с PC-A на PC-B.
+
+
+> c.	Отправьте команду ping с компьютера PC-A на коммутатор S2.
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab06/files/Ping_S2.png?raw=true)
 
