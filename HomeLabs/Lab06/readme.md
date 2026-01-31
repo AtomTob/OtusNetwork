@@ -300,3 +300,65 @@ Fa0/1       10,30,999
 > b.	Сохраните текущую конфигурацию в файл загрузочной конфигурации.<br>
 > c.	Проверка транкинга.<br>
 
+```
+S1(config)#int f0/5
+S1(config-if)#sw m tr
+S1(config-if)#sw noneg
+S1(config-if)#sw tr nat vl 1000
+S1(config-if)#sw tr al vl 10,20,999
+S1(config-if)#^Z
+S1#
+%SYS-5-CONFIG_I: Configured from console by console
+sh int tr
+Port        Mode         Encapsulation  Status        Native vlan
+Fa0/1       on           802.1q         trunking      1000
+
+Port        Vlans allowed on trunk
+Fa0/1       10,20,999
+
+Port        Vlans allowed and active in management domain
+Fa0/1       10,20,999
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Fa0/1       10,20,999
+```
+
+> Что произойдет, если G0/0/1 на R1 будет отключен?
+
+Порт Fa0/5 не появится в списке транков (собственно, что мы и наблюдаем, т.к. по умолчанию порты выключены и транк не поднимается).
+
+##
+#### Часть 4. Настройка маршрутизации между сетями VLAN
+##### Шаг 1. Настройте маршрутизатор.
+
+> a.	При необходимости активируйте интерфейс G0/0/1 на маршрутизаторе.
+
+```
+R1(config)#int g0/1
+R1(config-if)#no shut
+```
+
+> b.	Настройте подинтерфейсы для каждой VLAN, как указано в таблице IP-адресации. Все подинтерфейсы используют инкапсуляцию 802.1Q. Убедитесь, что подинтерфейсу для native VLAN не назначен IP-адрес. Включите описание для каждого подинтерфейса.
+```
+R1(config)#int g0/1.10
+R1(config-subif)#encap dot 10
+R1(config-subif)#desc SubInterface10
+R1(config-subif)#ip add 192.168.10.1 255.255.255.0
+
+R1(config)#int g0/1.20
+R1(config-subif)#encap dot 20
+R1(config-subif)#desc SubInterface 20
+R1(config-subif)#ip add 192.168.20.1 255.255.255.0
+
+R1(config)#int g0/1.30
+R1(config-subif)#enc dot 30
+R1(config-subif)#desc SubInterface 30
+R1(config-subif)#ip add 192.168.30.1 255.255.255.0
+R1(config-subif)#ex
+R1(config)#int g0/1.20
+
+R1(config)#int g0/1.1000
+R1(config-subif)#desc NativeVLAN_1000
+R1(config-subif)#encap dot 1000 native
+```
+
