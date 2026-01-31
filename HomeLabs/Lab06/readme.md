@@ -72,7 +72,7 @@ R1(config)#clock ?<br>
 #### Шаг 3. Настройте базовые параметры каждого коммутатора.
 
 ##### Настройки первого коммутатора
-'''
+```
 Switch(config)#hostname S1
 S1(config)#no ip domain-lookup 
 S1(config)#enable secret 0 class
@@ -89,6 +89,29 @@ S1(config)#banner motd !!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!
 S1(config)#clock timezone EKB 5 0
 S1(config)#clock ?
   timezone  Configure time zone
-'''
+```
+Задан только часовой пояс, остальные параметры установки времени недоступны.
+
+##### Настройки второго коммутатора
+
+```
+Switch(config)#hostname S2
+S2(config)#no ip domain-lookup 
+S2(config)#enable secret 0 class
+S2(config)#line con 0
+S2(config-line)#password cisco
+S2(config-line)#login
+S2(config-line)#exit
+S2(config)#line vty 0 15
+S2(config-line)#password cisco
+S2(config-line)#login
+S2(config-line)#exit
+S2(config)#service password-encryption
+S2(config)#banner motd !!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!
+S2(config)#clock timezone EKB 5 0
+S2(config)#clock ?
+  timezone  Configure time zone
+```
+Задан только часовой пояс, остальные параметры установки времени недоступны.
 
 
