@@ -41,21 +41,21 @@ Router(config)#enable secret 0 class
 
 > e.	Назначьте **cisco** в качестве пароля консоли и включите вход в систему по паролю.
 
-Router(config)#line con 0
-Router(config-line)# password 7 0822455D0A16
-Router(config-line)# logging synchronous
-Router(config-line)# login
+Router(config)#line con 0<br>
+Router(config-line)# password 7 0822455D0A16<br>
+Router(config-line)# logging synchronous<br>
+Router(config-line)# login<br>
 
 > f.	Назначьте ciscoв качестве пароля VTY и включите вход в систему по паролю.
 
-Router(config)#line vty 0 15
-Router(config-line)# password 7 0822455D0A16
-Router(config-line)# login
+Router(config)#line vty 0 15<br>
+Router(config-line)# password 7 0822455D0A16<br>
+Router(config-line)# login<br>
 
 > g.	Зашифруйте открытые пароли.
 
-Все пароли вводились хешами, за исключением в привилегированный режим EXEC.
-Но при необходимости можно использовать команду **Router(config)#service password-encryption **
+Все пароли вводились хешами, за исключением в привилегированный режим EXEC.<br>
+Но при необходимости можно использовать команду Router(config)#service password-encryption.
 
 > h.	Создайте баннер, который предупреждает о запрете несанкционированного доступа.
 
@@ -63,13 +63,13 @@ Router(config)#banner motd !!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!
 
 > i.	Настройте и активируйте на маршрутизаторе интерфейс G0/0/1, используя информацию, приведенную в таблице адресации.
 
-Router(config)#int g0/1
-Router(config-if)#ip address 192.168.1.1 255.255.255.0
+Router(config)#int g0/1<br>
+Router(config-if)#ip address 192.168.1.1 255.255.255.0<br>
 
 > j.	Сохраните текущую конфигурацию в файл загрузочной конфигурации.
 
-Router#wr
-Building configuration...
+Router#wr<br>
+Building configuration...<br>
 [OK]
 
 ##
