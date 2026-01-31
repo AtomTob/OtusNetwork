@@ -123,5 +123,119 @@ S2(config)#clock ?
 #### Часть 2. Создание сетей VLAN и назначение портов коммутатора
 ##### Шаг 1. Создайте сети VLAN на коммутаторах.
 
+> a.	Создайте и назовите необходимые VLAN на каждом коммутаторе из таблицы выше. Откройте окно конфигурации
+> b.	Настройте интерфейс управления и шлюз по умолчанию на каждом коммутаторе, используя информацию об IP-адресе в таблице адресации. 
+> c.	Назначьте все неиспользуемые порты коммутатора VLAN Parking_Lot, настройте их для статического режима доступа и административно деактивируйте их.
 
+
+Настроен коммутатор S1
+```
+S1(config)#vl 10
+S1(config-vlan)#name Management
+S1(config-vlan)#ex
+S1(config)#vl 20
+S1(config-vlan)#name Sales
+S1(config-vlan)#ex
+S1(config)#vl 999
+S1(config-vlan)#name Parking_Lot
+S1(config-vlan)#int vl 10
+S1(config-if)#
+%LINK-5-CHANGED: Interface Vlan10, changed state to up
+S1(config-if)#ip add 192.168.10.11 255.255.255.0
+S1(config-if)#ex
+S1(config)#ip default-gateway 192.168.10.1
+S1(config)#int ran F0/2-4, F0/7-24, G0/1-2
+S1(config-if-range)#sw m a
+S1(config-if-range)#sw a vl 999
+S1(config-if-range)#sw noneg
+S1(config-if-range)#shut
+```
+
+Настроен коммутатор S2
+```
+S2(config)#vlan 10
+S2(config-vlan)#name Management
+S2(config-vlan)#exit
+S2(config)#vlan 30
+S2(config-vlan)#name Operations
+S2(config-vlan)#exit
+S2(config)#vlan 999
+S2(config-vlan)#name Parking_Lot
+S2(config-vlan)#exit
+S2(config)#int vl 10
+S2(config-if)#
+%LINK-5-CHANGED: Interface Vlan10, changed state to up
+S2(config-if)#ip add 192.168.10.12 255.255.255.0
+S2(config-if)#exit
+S2(config)#ip default-gateway 192.168.10.1
+S2(config)#int ran F0/2-17, F0/19-24, G0/1-2
+S2(config-if-range)#sw m a
+S2(config-if-range)#sw a vl 999
+S2(config-if-range)#sw noneg
+S2(config-if-range)#shut
+```
+
+##
+#### Шаг 2. Назначьте сети VLAN соответствующим интерфейсам коммутатора.
+
+> a.	Назначьте используемые порты соответствующей VLAN (указанной в таблице VLAN выше) и настройте их для режима статического доступа.
+
+Настроен коммутатор S1
+```
+S1(config)#int f0/6
+S1(config-if)#sw m a
+S1(config-if)#sw a vl 20
+```
+
+Настроен коммутатор S2
+```
+S2(config)#int f0/18
+S2(config-if)#sw m a
+S2(config-if)#sw a vl 30
+```
+
+> b.	Убедитесь, что VLAN назначены на правильные интерфейсы.
+
+Убеждаемся на примере коммутатора S1
+```
+S1#sh vl br
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Fa0/1, Fa0/5
+10   Management                       active    
+20   Sales                            active    Fa0/6
+999  Parking_Lot                      active    Fa0/2, Fa0/3, Fa0/4, Fa0/7
+                                                Fa0/8, Fa0/9, Fa0/10, Fa0/11
+                                                Fa0/12, Fa0/13, Fa0/14, Fa0/15
+                                                Fa0/16, Fa0/17, Fa0/18, Fa0/19
+                                                Fa0/20, Fa0/21, Fa0/22, Fa0/23
+                                                Fa0/24, Gig0/1, Gig0/2
+1002 fddi-default                     active    
+1003 token-ring-default               active    
+1004 fddinet-default                  active    
+1005 trnet-default                    active  
+```
+
+
+Убеждаемся на примере коммутатора S2
+```
+S2#sh vl br
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Fa0/1
+10   Management                       active    
+30   Operations                       active    Fa0/18
+999  Parking_Lot                      active    Fa0/2, Fa0/3, Fa0/4, Fa0/5
+                                                Fa0/6, Fa0/7, Fa0/8, Fa0/9
+                                                Fa0/10, Fa0/11, Fa0/12, Fa0/13
+                                                Fa0/14, Fa0/15, Fa0/16, Fa0/17
+                                                Fa0/19, Fa0/20, Fa0/21, Fa0/22
+                                                Fa0/23, Fa0/24, Gig0/1, Gig0/2
+1002 fddi-default                     active    
+1003 token-ring-default               active    
+1004 fddinet-default                  active    
+1005 trnet-default                    active 
+```
 
