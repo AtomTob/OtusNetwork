@@ -55,7 +55,7 @@ Router(config-line)# login<br>
 > g.	Зашифруйте открытые пароли.
 
 Все пароли вводились хешами, за исключением в привилегированный режим EXEC.<br>
-Но при необходимости можно использовать команду Router(config)#service password-encryption.
+Но при необходимости можно использовать команду __Router(config)#service password-encryption__.
 
 > h.	Создайте баннер, который предупреждает о запрете несанкционированного доступа.
 
@@ -65,6 +65,7 @@ Router(config)#banner motd !!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!
 
 Router(config)#int g0/1<br>
 Router(config-if)#ip address 192.168.1.1 255.255.255.0<br>
+Router(config-if)#no shutdown<br>
 
 > j.	Сохраните текущую конфигурацию в файл загрузочной конфигурации.
 
@@ -75,7 +76,32 @@ Building configuration...<br>
 ##
 ##### Шаг 4. Настройте компьютер PC-A.
 
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab05/files/ConfigPC0.png?raw=true "Настройка РС")
 
+##
+##### Шаг 5. Проверьте подключение к сети.
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab05/files/Ping_R1.png?raw=true "Проверка подключения")
+
+##
+#### Часть 2. Настройка маршрутизатора для доступа по протоколу SSH
+##### Шаг 1. Настройте аутентификацию устройств.
+
+> a.	Задайте имя устройства.<br>
+> b.	Задайте домен для устройства.
+
+Router(config)#hostname R1<br>
+R1(config)#ip domain-name home.local
+
+##
+##### Шаг 2. Создайте ключ шифрования с указанием его длины.
+
+R1(config)#crypto key generate rsa general-keys modulus 2048<br>
+The name for the keys will be: R1.home.local
+
+% The key modulus size is 2048 bits<br>
+% Generating 2048 bit RSA keys, keys will be non-exportable...[OK]<br>
+*Mar 1 1:11:46.86: %SSH-5-ENABLED: SSH 1.99 has been enabled<br>
 
 
 
