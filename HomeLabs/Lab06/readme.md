@@ -62,6 +62,13 @@ R1(config-line)#exit<br>
 R1(config)#service password-encryption<br>
 R1(config)#banner motd ^C!!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!^C<br>
 R1(config)#clock timezone EKB 5 0<br>
+R1(config)#ip domain-name home.local
+R1(config)#crypto key generate rsa general-keys modulus 2048
+R1(config)#ip ssh version 2
+R1(config)#username admin secret 5 $1$mERr$qJb.eHvBN7S590aq.dpRL.
+R1(config)#line vty 0 4
+R1(config-line)#transport input ssh
+R1(config-line)#login local
 R1#clock set 07:29:00 01 feb 2026
 
 ##
@@ -84,6 +91,13 @@ S1(config-line)#exit
 S1(config)#service password-encryption
 S1(config)#banner motd ^C!!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!^C
 S1(config)#clock timezone EKB 5 0
+S1(config)#ip domain-name home.local
+S1(config)#crypto key generate rsa general-keys modulus 2048
+S1(config)#ip ssh version 2
+S1(config)#username admin secret 5 $1$mERr$qJb.eHvBN7S590aq.dpRL.
+S1(config)#line vty 0 4
+S1(config-line)#transport input ssh
+S1(config-line)#login local
 S1#clock set 07:33:00 01 feb 2026
 ```
 
@@ -105,8 +119,14 @@ S2(config-line)#exit
 S2(config)#service password-encryption
 S2(config)#banner motd ^C!!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!^C
 S2(config)#clock timezone EKB 5 0
-S2(config)#clock ?
-  timezone  Configure time zone
+S2(config)#ip domain-name home.local
+S2(config)#crypto key generate rsa general-keys modulus 2048
+S2(config)#ip ssh version 2
+S2(config)#username admin secret 5 $1$mERr$qJb.eHvBN7S590aq.dpRL.
+S2(config)#line vty 0 4
+S2(config-line)#transport input ssh
+S2(config-line)#login local
+S1#clock set 07:34:00 01 feb 2026
 ```
 
 
@@ -250,21 +270,20 @@ S1(config)#int f0/1
 S1(config-if)#sw m tr
 S1(config-if)#sw noneg
 S1(config-if)#sw tr nat vl 1000
-S1(config-if)#sw tr al vl 10,20,999
+S1(config-if)#sw tr al vl 10,20,30,999
 
-S1#
 S1#sh int tr
 Port        Mode         Encapsulation  Status        Native vlan
 Fa0/1       on           802.1q         trunking      1000
 
 Port        Vlans allowed on trunk
-Fa0/1       10,20,999
+Fa0/1       10,20,30,999
 
 Port        Vlans allowed and active in management domain
 Fa0/1       10,20,999
 
 Port        Vlans in spanning tree forwarding state and not pruned
-Fa0/1       999
+Fa0/1       10,20,999
 ```
 
 Настройки и их проверка коммутатора S2
@@ -273,14 +292,14 @@ S2(config)#int f0/1
 S2(config-if)#sw m tr
 S2(config-if)#sw noneg
 S2(config-if)#sw tr nat vl 1000
-S2(config-if)#sw tr al vl 10,30,999
+S2(config-if)#sw tr al vl 10,20,30,999
 
 S2#sh int tr
 Port        Mode         Encapsulation  Status        Native vlan
 Fa0/1       on           802.1q         trunking      1000
 
 Port        Vlans allowed on trunk
-Fa0/1       10,30,999
+Fa0/1       10,20,30,999
 
 Port        Vlans allowed and active in management domain
 Fa0/1       10,30,999
@@ -301,7 +320,7 @@ S1(config)#int f0/5
 S1(config-if)#sw m tr
 S1(config-if)#sw noneg
 S1(config-if)#sw tr nat vl 1000
-S1(config-if)#sw tr al vl 10,20,999
+S1(config-if)#sw tr al vl 10,20,30,999
 S1(config-if)#^Z
 S1#
 %SYS-5-CONFIG_I: Configured from console by console
@@ -310,7 +329,7 @@ Port        Mode         Encapsulation  Status        Native vlan
 Fa0/1       on           802.1q         trunking      1000
 
 Port        Vlans allowed on trunk
-Fa0/1       10,20,999
+Fa0/1       10,20,30,999
 
 Port        Vlans allowed and active in management domain
 Fa0/1       10,20,999
@@ -321,7 +340,7 @@ Fa0/1       10,20,999
 
 > Что произойдет, если G0/0/1 на R1 будет отключен?
 
-Порт Fa0/5 не появится в списке транков (собственно, что мы и наблюдаем, т.к. по умолчанию порты выключены и транк не поднимается).
+__Порт Fa0/5 не появится в списке транков (собственно, что мы и наблюдаем, т.к. по умолчанию порты выключены и транк не поднимается).__
 
 ##
 #### Часть 4. Настройка маршрутизации между сетями VLAN
@@ -397,5 +416,29 @@ Vlan1                  unassigned      YES unset  administratively down down
 
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab06/files/Ping_S2.png?raw=true)
 
+##
+##### Шаг 2. Пройдите следующий тест с PC-B
+
+В окне командной строки на PC-B выполните команду tracert на адрес PC-A.
+> Вопрос: Какие промежуточные IP-адреса отображаются в результатах?
+
+__Не могу разобраться в недоступности хоста РС-В.<br>
+Чтобы я не делал, запросы идут максимум до коммутатора S2, прошу помочь разобраться, в чем ошибка в проекте.__
+
+##
+##	Сводная таблица по интерфейсам маршрутизаторов
+
+| Модель маршрутизатора	| Интерфейс Ethernet № 1	| Интерфейс Ethernet № 2	| Последовательный интерфейс № 1	| Последовательный интерфейс № 2| 
+| ------------- |:------------------:|------------- |------------- |-------------|
+| 1 800	F| ast Ethernet 0/0 (F0/0)| 	Fast Ethernet 0/1 (F0/1)	| Serial 0/0/0 (S0/0/0)	| Serial 0/0/1 (S0/0/1)| 
+| 1900	| Gigabit Ethernet 0/0 (G0/0)| 	Gigabit Ethernet 0/1 (G0/1)	| Serial 0/0/0 (S0/0/0)	| Serial 0/0/1 (S0/0/1)| 
+| 2801	| Fast Ethernet 0/0 (F0/0)| 	Fast Ethernet 0/1 (F0/1)| 	Serial 0/1/0 (S0/1/0)| 	Serial 0/1/1 (S0/1/1)| 
+| 2811| 	Fast Ethernet 0/0 (F0/0)| 	Fast Ethernet 0/1 (F0/1)| 	Serial 0/0/0 (S0/0/0)	| Serial 0/0/1 (S0/0/1)| 
+| 2900| 	Gigabit Ethernet 0/0 (G0/0)	| Gigabit Ethernet 0/1 (G0/1)| Serial 0/0/0 (S0/0/0)	| Serial 0/0/1 (S0/0/1)| 
+| 4221| 	Gigabit Ethernet 0/0/0 (G0/0/0)| 	Gigabit Ethernet 0/0/1|  (G0/0/1)	Serial 0/1/0 (S0/1/0)| 	Serial 0/1/1 (S0/1/1)| 
+| 4300	| Gigabit Ethernet 0/0/0 (G0/0/0)| 	Gigabit Ethernet 0/0/1 | (G0/0/1)	Serial 0/1/0 (S0/1/0)	| Serial 0/1/1 (S0/1/1)| 
+
+__Примечание.__ Чтобы определить конфигурацию маршрутизатора, можно посмотреть на интерфейсы и установить тип маршрутизатора и количество его интерфейсов. Перечислить все комбинации конфигураций для каждого класса маршрутизаторов невозможно. Эта таблица содержит идентификаторы для возможных комбинаций интерфейсов Ethernet и последовательных интерфейсов на устройстве. Другие типы интерфейсов в таблице не представлены, хотя они могут присутствовать в данном конкретном маршрутизаторе. В качестве примера можно привести интерфейс ISDN BRI. Строка в скобках — это официальное сокращение, которое можно использовать в командах Cisco IOS для обозначения интерфейса.
 
 
+Файл проекта по лабораторной работе [здесь](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab06/files/Lab06.pkt)
