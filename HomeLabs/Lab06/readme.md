@@ -62,10 +62,7 @@ R1(config-line)#exit<br>
 R1(config)#service password-encryption<br>
 R1(config)#banner motd ^C!!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!^C<br>
 R1(config)#clock timezone EKB 5 0<br>
-R1(config)#clock ?<br>
-  timezone  Configure time zone<br>
-
-Задан только часовой пояс, остальные параметры установки времени недоступны.
+R1#clock set 07:29:00 01 feb 2026
 
 ##
 
@@ -87,10 +84,9 @@ S1(config-line)#exit
 S1(config)#service password-encryption
 S1(config)#banner motd ^C!!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!^C
 S1(config)#clock timezone EKB 5 0
-S1(config)#clock ?
-  timezone  Configure time zone
+S1#clock set 07:33:00 01 feb 2026
 ```
-Задан только часовой пояс, остальные параметры установки времени недоступны.
+
 
 ##### Настройки второго коммутатора
 
@@ -112,7 +108,7 @@ S2(config)#clock timezone EKB 5 0
 S2(config)#clock ?
   timezone  Configure time zone
 ```
-Задан только часовой пояс, остальные параметры установки времени недоступны.
+
 
 ##
 #### Шаг 4. Настройте узлы ПК.
