@@ -410,7 +410,7 @@ Vlan1                  unassigned      YES unset  administratively down down
 
 > b.	Отправьте эхо-запрос с PC-A на PC-B.
 
-#### Чтобы я не делал - запросы до РС-В не проходят, прошу помощи в решении.
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab06/files/Ping_PC-B.jpg?raw=true "Ping PC-B")
 
 > c.	Отправьте команду ping с компьютера PC-A на коммутатор S2.
 
@@ -422,8 +422,9 @@ Vlan1                  unassigned      YES unset  administratively down down
 В окне командной строки на PC-B выполните команду tracert на адрес PC-A.
 > Вопрос: Какие промежуточные IP-адреса отображаются в результатах?
 
-__Не могу разобраться в недоступности хоста РС-В.<br>
-Чтобы я не делал, запросы идут максимум до коммутатора S2, прошу помочь разобраться, в чем ошибка в проекте.__
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab06/files/Tracert.jpg?raw=true "Tracert")
+
+При выполнении команды отображены шлюз хоста PC-B и адрес "пингуемого" хоста - РС-А.
 
 ##
 ##	Сводная таблица по интерфейсам маршрутизаторов
