@@ -47,7 +47,7 @@ ip domain-name home.local
 crypto key generate rsa general-keys modulus 2048
 ip ssh version 2
 username admin secret 5 $1$mERr$qJb.eHvBN7S590aq.dpRL.
-line vty 0 4
+line vty 0 15
 transport input ssh
 login local
 int vl 1
@@ -81,6 +81,38 @@ copy running-config startup-config
 ##### Шаг 2:	Настройте подключенные порты в качестве транковых.
 ##### Шаг 3:	Включите порты F0/2 и F0/4 на всех коммутаторах.
 
+Для всех 3-х шагов выполняется одинаковый скрипт на каждом коммутаторе
 
+```
+int ran f0/1-24
+shut
+ex
+int ran f0/1-4
+sw m trunk
+ex
+int ran f0/2,f0/4
+no shut
+```
 
+##
+##### Шаг 4:	Отобразите данные протокола spanning-tree.
 
+```
+S1#sh spanning-tree 
+VLAN0001
+  Spanning tree enabled protocol ieee
+  Root ID    Priority    32769
+             __Address     0001.C9D8.3CD1
+             This bridge is the root__
+             Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    32769  (priority 32768 sys-id-ext 1)
+             Address     0001.C9D8.3CD1
+             Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  20
+
+Interface        Role Sts Cost      Prio.Nbr Type
+---------------- ---- --- --------- -------- --------------------------------
+Fa0/2            Desg FWD 19        128.2    P2p
+Fa0/4            Desg FWD 19        128.4    P2p
+```
