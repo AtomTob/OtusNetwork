@@ -102,8 +102,8 @@ S1#sh spanning-tree
 VLAN0001
   Spanning tree enabled protocol ieee
   Root ID    Priority    32769
-             __Address     0001.C9D8.3CD1
-             This bridge is the root__
+             Address     0001.C9D8.3CD1
+             This bridge is the root
              Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
 
   Bridge ID  Priority    32769  (priority 32768 sys-id-ext 1)
@@ -116,3 +116,48 @@ Interface        Role Sts Cost      Prio.Nbr Type
 Fa0/2            Desg FWD 19        128.2    P2p
 Fa0/4            Desg FWD 19        128.4    P2p
 ```
+
+```
+VLAN0001
+  Spanning tree enabled protocol ieee
+  Root ID    Priority    32769
+             Address     0001.C9D8.3CD1
+             Cost        19
+             Port        2(FastEthernet0/2)
+             Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    32769  (priority 32768 sys-id-ext 1)
+             Address     00D0.BCD5.844D
+             Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  20
+
+Interface        Role Sts Cost      Prio.Nbr Type
+---------------- ---- --- --------- -------- --------------------------------
+Fa0/2            Root FWD 19        128.2    P2p
+Fa0/4            Desg FWD 19        128.4    P2p
+```
+
+```
+S3#sh sp
+VLAN0001
+  Spanning tree enabled protocol ieee
+  Root ID    Priority    32769
+             Address     0001.C9D8.3CD1
+             Cost        19
+             Port        4(FastEthernet0/4)
+             Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    32769  (priority 32768 sys-id-ext 1)
+             Address     00E0.8FE5.B405
+             Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  20
+
+Interface        Role Sts Cost      Prio.Nbr Type
+---------------- ---- --- --------- -------- --------------------------------
+Fa0/2            Altn BLK 19        128.2    P2p
+Fa0/4            Root FWD 19        128.4    P2p
+```
+
+Выведем на всех 3-х коммутаторах результат команды __show spanning-tree__.
+Из вывода команд видно, что корневым мостом является коммутатор S1.
+
