@@ -102,12 +102,12 @@ S1#sh spanning-tree
 VLAN0001
   Spanning tree enabled protocol ieee
   Root ID    Priority    32769
-             Address     0001.C9D8.3CD1
+             Address     0001.96E4.5401
              This bridge is the root
              Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
 
   Bridge ID  Priority    32769  (priority 32768 sys-id-ext 1)
-             Address     0001.C9D8.3CD1
+             Address     0001.96E4.5401
              Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
              Aging Time  20
 
@@ -118,16 +118,17 @@ Fa0/4            Desg FWD 19        128.4    P2p
 ```
 
 ```
+S2#sh spanning-tree 
 VLAN0001
   Spanning tree enabled protocol ieee
   Root ID    Priority    32769
-             Address     0001.C9D8.3CD1
+             Address     0001.96E4.5401
              Cost        19
              Port        2(FastEthernet0/2)
              Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
 
   Bridge ID  Priority    32769  (priority 32768 sys-id-ext 1)
-             Address     00D0.BCD5.844D
+             Address     000C.85AB.3795
              Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
              Aging Time  20
 
@@ -138,17 +139,17 @@ Fa0/4            Desg FWD 19        128.4    P2p
 ```
 
 ```
-S3#sh sp
+S3#sh spanning-tree 
 VLAN0001
   Spanning tree enabled protocol ieee
   Root ID    Priority    32769
-             Address     0001.C9D8.3CD1
+             Address     0001.96E4.5401
              Cost        19
              Port        4(FastEthernet0/4)
              Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
 
   Bridge ID  Priority    32769  (priority 32768 sys-id-ext 1)
-             Address     00E0.8FE5.B405
+             Address     00D0.9768.33C5
              Hello Time  2 sec  Max Age 20 sec  Forward Delay 15 sec
              Aging Time  20
 
@@ -160,3 +161,34 @@ Fa0/4            Root FWD 19        128.4    P2p
 
 Из вывода команд видно, что корневым мостом является коммутатор S1.
 
+Схема с ролями и состоянием (Sts) активных портов на каждом коммутаторе в топологии.
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab07/files/Scheme1.jpg?raw=true)
+
+##
+#### С учетом выходных данных, поступающих с коммутаторов, ответьте на следующие вопросы.
+
+> Какой коммутатор является корневым мостом?
+
+__S1__
+
+> Почему этот коммутатор был выбран протоколом spanning-tree в качестве корневого моста?
+
+__Потому что у него меньшее, чем у остальных коммутаторов, значение МАС-адреса при одинаковом значении приоритета (ID Priority)__
+
+> Какие порты на коммутаторе являются корневыми портами?
+
+__У коммутатора S2 корневой порт - Fa0/2__ <br>
+__У коммутатора S3 корневой порт - Fa0/4__
+
+> Какие порты на коммутаторе являются назначенными портами? 
+
+__У корневого коммутатора S1 назначенные порты - Fa0/2 и Fa0/4__ <br>
+__У коммутатора S2 назначенный порт - Fa0/4__ <br>
+__У коммутатора S3 назначенный порт отсутствует__ <br>
+
+> Какой порт отображается в качестве альтернативного и в настоящее время заблокирован?
+
+__Альтернативный, и поэтому заблокированный, порт Fa0/2 принадлежит коммутатору S3__
+
+> Почему протокол spanning-tree выбрал этот порт в качестве невыделенного (заблокированного) порта?
