@@ -136,4 +136,8 @@ clock set 15:00:00 22 feb 2026
 copy running-config startup-config
 ```
 
+##
+
+##### Шаг 4.	Настройка маршрутизации между сетями VLAN на маршрутизаторе R1
+
 
