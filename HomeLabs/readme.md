@@ -97,3 +97,42 @@ __IPv4-адрес последнего узла в этой подсети__<br>
 |S2|	VLAN 1|	192.168.1.98	|255.255.255.240	|192.168.1.97|
 |PC-A|	NIC|	DHCP	|DHCP	|DHCP|
 |PC-B|	NIC	|DHCP|	DHCP	|DHCP|
+
+##
+
+##### Шаг 2.	Создайте сеть согласно топологии.
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.1/files/topo1.jpg?raw=true)
+
+##
+
+##### Шаг 3.	Произведите базовую настройку маршрутизаторов.
+
+```
+hostname R1
+no ip domain-lookup
+enable secret 0 class
+line con 0
+password cisco
+login
+exit
+line vty 0 15
+password cisco
+login
+exit
+service password-encryption
+banner motd ^C!!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!^C
+clock timezone EKB 5 0
+ip domain-name home.local 
+crypto key generate rsa general-keys modulus 2048 
+ip ssh version 2 
+username admin secret 5 $1$mERr$qJb.eHvBN7S590aq.dpRL. 
+line vty 0 4 
+transport input ssh 
+login local 
+exit
+clock set 15:00:00 22 feb 2026
+copy running-config startup-config
+```
+
+
