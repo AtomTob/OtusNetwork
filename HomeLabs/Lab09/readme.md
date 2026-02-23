@@ -248,9 +248,15 @@ Gig0/2                       disabled 999        auto    auto  10/100BaseTX
 > - 	Максимальное количество записей MAC-адресов: 3
 > - 	Режим безопасности: restrict
 > - 	Aging time: 60 мин.
-> - 	Aging type: неактивный<
+> - 	Aging type: неактивный
 
-
+```
+S1(config)#int f0/6
+S1(config-if)#sw port-sec 
+S1(config-if)#sw port-sec max 3
+S1(config-if)#sw port-se violation restrict 
+S1(config-if)#sw port-sec aging time 60
+```
 
 
 
