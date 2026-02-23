@@ -481,15 +481,70 @@ Pool R2_Client_LAN :
 
 > b.	Выполните команду __show ip dhcp bindings__ для проверки установленных назначений адресов DHCP.
 
+```
+R1#show ip dhcp binding
+IP address       Client-ID/              Lease expiration        Type
+                 Hardware address
+192.168.1.7      0090.213A.1E75           --                     Automatic
+```
+
+> c.	Выполните команду __show ip dhcp server statistics__ для проверки сообщений DHCP.
+
 Неприменимо, возможно, ограничение Cisco Packet Tracer.
 
+##
+#### Шаг 4.	Попытка получить IP-адрес от DHCP на PC-A.
 
+> a.	Из командной строки компьютера PC-A выполните команду ip config /all.
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.1/files/ipconf1.jpg?raw=true)
+
+> b.	После завершения процесса обновления выполните команду ip config для просмотра новой информации об IP-адресе.
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.1/files/ipconf2.jpg?raw=true)
+
+> c.	Проверьте подключение с помощью пинга IP-адреса интерфейса R0 G0/0/1.
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.1/files/ping02.jpg?raw=true)
+
+##
+### Часть 3.	Настройка и проверка DHCP-ретрансляции на R2
+#### Шаг 1.	Настройка R2 в качестве агента DHCP-ретрансляции для локальной сети на G0/0/1
+
+> a.	Настройте команду ip helper-address на G0/0/1, указав IP-адрес G0/0/0 R1.
 
 ```
-
+R2(config)#int g0/1
+R2(config-if)#ip helper-address 10.0.0.1
 ```
 
+##
+#### Шаг 2.	Попытка получить IP-адрес от DHCP на PC-B
 
+> a.	Из командной строки компьютера PC-B выполните команду ip config /all.
 
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.1/files/ipconf3.jpg?raw=true)
 
+> b.	После завершения процесса обновления выполните команду ip config для просмотра новой информации об IP-адресе.
 
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.1/files/ipconf4.jpg?raw=true)
+
+> c.	Проверьте подключение с помощью пинга IP-адреса интерфейса R1 G0/0/1.
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.1/files/ping03.jpg?raw=true)
+
+> d.	Выполните __show ip dhcp binding__ для R1 для проверки назначений адресов в DHCP.
+
+```
+R1#show ip dhcp binding
+IP address       Client-ID/              Lease expiration        Type
+                 Hardware address
+192.168.1.7      0090.213A.1E75           --                     Automatic
+192.168.1.104    000C.CF45.2227           --                     Automatic
+```
+
+> e.	Выполните команду show ip dhcp server statistics для проверки сообщений DHCP.
+
+Неприменимо, возможно, ограничение Cisco Packet Tracer.
+
+Файл проекта по лабораторной работе [здесь](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.1/files/Lab8.1.pkt).
