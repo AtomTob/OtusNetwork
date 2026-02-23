@@ -244,11 +244,11 @@ Gig0/2                       disabled 999        auto    auto  10/100BaseTX
 |Secure Static Address Aging	|Disabled|
 |Sticky MAC Address	|0|
 
-> b.	На S1 включите защиту порта на F0 / 6 со следующими настройками:
-> Максимальное количество записей MAC-адресов: 3
-> Режим безопасности: restrict
-> Aging time: 60 мин.
-> Aging type: неактивный
+> b.	На S1 включите защиту порта на F0 / 6 со следующими настройками:<br>
+> Максимальное количество записей MAC-адресов: 3<br>
+> Режим безопасности: restrict<br>
+> Aging time: 60 мин.<br>
+> Aging type: неактивный<br>
 
 ```
 S1(config)#int f0/6
