@@ -79,8 +79,8 @@ __IPv4-адрес первого узла в этой подсети__<br>
 192.168.1.97 /28<br>
 
 __IPv4-адрес последнего узла в этой подсети__<br>
-192.168.1.0110 1110 /27<br>
-192.168.1.110 /27<br>
+192.168.1.0110 1110 /28<br>
+192.168.1.110 /28<br>
 
 #### Итоговая таблица маршрутизации
 
@@ -356,7 +356,7 @@ VLAN Name                             Status    Ports
                                                 Gig0/1, Gig0/2
 ```
 
-> Почему интерфейс F0/5 указан в VLAN 1?
+> __Почему интерфейс F0/5 указан в VLAN 1?__
 
 Потому что Vlan 1 всегда присутствует на коммутаторе по умолчанию и все порты также изначально принадлежат именно этому Vlan.
 
@@ -370,5 +370,126 @@ VLAN Name                             Status    Ports
 S1(config)#int f0/5
 S1(config-if)#sw mo tru
 ```
+
+> b.	В рамках конфигурации транка  установите для native  VLAN значение 1000.
+
+```
+S1(config-if)#sw tr native vlan 1000
+```
+
+> c.	В качестве другой части конфигурации магистрали укажите, что VLAN 100, 200 и 1000 могут проходить по транку.
+
+```
+S1(config-if)#sw tr all vl 100,200,1000
+```
+
+> d.	Сохраните текущую конфигурацию в файл загрузочной конфигурации.<br>
+> e.	Проверьте состояние транка.
+
+```
+S1#sh int tr
+Port        Mode         Encapsulation  Status        Native vlan
+Fa0/5       on           802.1q         trunking      1000
+
+Port        Vlans allowed on trunk
+Fa0/5       100,200,1000
+
+Port        Vlans allowed and active in management domain
+Fa0/5       100,200,1000
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Fa0/5       100,200,1000
+```
+
+> __Какой IP-адрес был бы у ПК, если бы он был подключен к сети с помощью DHCP?__
+
+Т.к. на текущий момент DHCP-сервер в сети отсутствует, то адрес ПК был бы __169.254.30.117__
+
+##
+### Часть 2.	Настройка и проверка двух серверов DHCPv4 на R1
+#### Шаг 1.	Настройте R1 с пулами DHCPv4 для двух поддерживаемых подсетей. Ниже приведен только пул DHCP для подсети A
+
+> a.	Исключите первые пять используемых адресов из каждого пула адресов.
+
+```
+R1(config)#ip dhcp excluded-address 192.168.1.2 192.168.1.6
+R1(config)#ip dhcp excluded-address 192.168.1.99 192.168.1.103
+```
+
+> b.	Создайте пул DHCP (используйте уникальное имя для каждого пула).
+
+```
+R1(config)#ip dhcp pool FirstNet
+R1(config)#ip dhcp pool SecondNet
+```
+
+> c.	Укажите сеть, поддерживающую этот DHCP-сервер.<br>
+> d.	В качестве имени домена укажите CCNA-lab.com.<br>
+> e.	Настройте соответствующий шлюз по умолчанию для каждого пула DHCP.<br>
+> f.	Настройте время аренды на 2 дня 12 часов и 30 минут. __Команда неприменима в примере__ <br>
+
+```
+R1(dhcp-config)#network 192.168.1.0 255.255.255.192
+R1(dhcp-config)#domain-name CCNA-lab.com
+R1(dhcp-config)#default-router 192.168.1.1
+R1(dhcp-config)#lease 2 12 30
+                ^
+% Invalid input detected at '^' marker.
+```
+ 
+> g.	Затем настройте второй пул DHCPv4, используя имя пула R2_Client_LAN и вычислите сеть, маршрутизатор по умолчанию, и используйте то же имя домена и время аренды, что и предыдущий пул DHCP.
+
+```
+R1(config)#ip dhcp pool R2_Client_LAN
+R1(dhcp-config)#network 192.168.1.96 255.255.255.240
+R1(dhcp-config)#domain-name CCNA-lab.com
+R1(dhcp-config)#default-router 192.168.1.97
+```
+
+##
+#### Шаг 3.	Проверка конфигурации сервера DHCPv4
+
+> a.	Чтобы просмотреть сведения о пуле, выполните команду __show ip dhcp pool__.
+
+```
+R1#show ip dhcp pool 
+
+Pool FirstNet :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 62
+ Leased addresses               : 1
+ Excluded addresses             : 2
+ Pending event                  : none
+
+ 1 subnet is currently in the pool
+ Current index        IP address range                    Leased/Excluded/Total
+ 192.168.1.1          192.168.1.1      - 192.168.1.62      1    / 2     / 62
+
+Pool R2_Client_LAN :
+ Utilization mark (high/low)    : 100 / 0
+ Subnet size (first/next)       : 0 / 0 
+ Total addresses                : 14
+ Leased addresses               : 0
+ Excluded addresses             : 2
+ Pending event                  : none
+
+ 1 subnet is currently in the pool
+ Current index        IP address range                    Leased/Excluded/Total
+ 192.168.1.97         192.168.1.97     - 192.168.1.110     0    / 2     / 14
+```
+
+> b.	Выполните команду __show ip dhcp bindings__ для проверки установленных назначений адресов DHCP.
+
+Неприменимо, возможно, ограничение Cisco Packet Tracer.
+
+
+
+```
+
+```
+
+
+
 
 
