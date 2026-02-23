@@ -204,4 +204,74 @@ Approximate round trip times in milli-seconds:
     Minimum = 0ms, Maximum = 4ms, Average = 1ms
 ```
 
+##
+### Часть 4. Настройка сервера DHCPv6 с сохранением состояния на R1.
+
+> a.	Создайте пул DHCPv6 на R1 для сети 2001:db8:acad:3:aaa::/80. Это предоставит адреса локальной сети, подключенной к интерфейсу G0/0/1 на R2. В составе пула задайте DNS-сервер 2001:db8:acad: :254 и задайте доменное имя STATEFUL.com.
+
+```
+R1(config)#ipv6 dhcp pool R2-STATEFUL
+R1(config-dhcpv6)#address prefix 2001:db8:acad:3:aaa::/80
+R1(config-dhcpv6)#dns-server 2001:db8:acad::254
+R1(config-dhcpv6)#domain-name STATEFUL.com
+```
+
+> b.	Назначьте только что созданный пул DHCPv6 интерфейсу g0/0 на R1.
+
+```
+R1(config)#interface g0/0
+R1(config-if)#ipv6 dhcp server R2-STATEFUL
+```
+
+##
+### Часть 5. Настройка и проверка ретрансляции DHCPv6 на R2.
+#### Шаг 1. Включите PC-B и проверьте адрес SLAAC, который он генерирует.
+
+```
+C:\>ipconfig /all
+FastEthernet0 Connection:(default port)
+   Connection-specific DNS Suffix..: 
+   Physical Address................: 0007.EC5C.809D
+   Link-local IPv6 Address.........: FE80::207:ECFF:FE5C:809D
+   IPv6 Address....................: 2001:DB8:ACAD:3:207:ECFF:FE5C:809D
+   Autoconfiguration IP Address....: 169.254.128.157
+   Subnet Mask.....................: 255.255.0.0
+   Default Gateway.................: FE80::1
+                                     0.0.0.0
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 
+   DHCPv6 Client DUID..............: 00-01-00-01-92-E7-D4-05-00-07-EC-5C-80-9D
+   DNS Servers.....................: ::
+                                     0.0.0.0
+```
+
+#### Шаг 2. Настройте R2 в качестве агента DHCP-ретрансляции для локальной сети на G0/0/1.
+
+> a.	Настройте команду __ipv6 dhcp relay__ на интерфейсе R2 G0/0/1, указав адрес назначения интерфейса G0/0/0 на R1. Также настройте команду __managed-config-flag__ .
+
+```
+R2(config)#int g0/1
+R2(config-if)#ipv6 nd managed-config-flag
+R2(config-if)#ipv6 dhcp relay destination 2001:db8:acad:2::1 g0/0
+                        ^
+% Invalid input detected at '^' marker.
+```
+
+## Т.к. команда dhcp relay неприменима в Cisco Packet Tracer, поэтому реализуем dhcp-сервер сразу на R2:
+
+```
+R2(config)#ipv6 dhcp pool R2-STATEFUL
+R2(config-dhcpv6)#address prefix 2001:db8:acad:3:aaa::/80
+R2(config-dhcpv6)#dns-server 2001:db8:acad::254
+R2(config-dhcpv6)#domain-name STATEFUL.com
+R2(config-dhcpv6)#ex
+R2(config)#int g0/1
+R2(config-if)#ipv6 nd managed-config-flag 
+R2(config-if)#ipv6 dhcp server R2-STATEFUL
+```
+
+#### Шаг 3. Попытка получить адрес IPv6 из DHCPv6 на PC-B.
+
+> a.	Перезапустите PC-B.
+> b.	Откройте командную строку на PC-B и выполните команду ipconfig /all и проверьте выходные данные, чтобы увидеть результаты операции ретрансляции DHCPv6.
 
