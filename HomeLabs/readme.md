@@ -140,6 +140,9 @@ copy running-config startup-config
 
 ##### Шаг 4.	Настройка маршрутизации между сетями VLAN на маршрутизаторе R1
 
+> a.	Активируйте интерфейс G0/0/1 на маршрутизаторе.<br>
+> b.	Настройте подинтерфейсы для каждой VLAN в соответствии с требованиями таблицы IP-адресации. Все субинтерфейсы используют инкапсуляцию 802.1Q и назначаются первый полезный адрес из вычисленного пула IP-адресов. Убедитесь, что подинтерфейсу для native VLAN не назначен IP-адрес. Включите описание для каждого подинтерфейса.<br>
+
 ```
 R1(config)#int g0/1
 R1(config-if)#no shut
@@ -147,16 +150,18 @@ R1(config)#int g0/1.100
 R1(config-subif)#encapsulation dot1Q 100
 R1(config-subif)#ip address 192.168.1.1 255.255.255.192
 R1(config-subif)#description Clients
-R1(config-subif)#ex<br>
-<br>
+R1(config-subif)#ex
+
 R1(config)#int g0/1.200
 R1(config-subif)#encapsulation dot1Q 200
 R1(config-subif)#ip address 192.168.1.65 255.255.255.224
 R1(config-subif)#description MGMNT
-R1(config-subif)#ex<br>
-<br>
+R1(config-subif)#ex
+
 R1(config)#int g0/1.1000
 R1(config-subif)#encapsulation dot1Q 1000 native
 R1(config-subif)#description NativeVLAN
 ```
+
+> c.	Убедитесь, что вспомогательные интерфейсы работают.<br>
 
