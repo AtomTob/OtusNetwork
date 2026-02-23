@@ -275,3 +275,25 @@ R2(config-if)#ipv6 dhcp server R2-STATEFUL
 > a.	Перезапустите PC-B.
 > b.	Откройте командную строку на PC-B и выполните команду ipconfig /all и проверьте выходные данные, чтобы увидеть результаты операции ретрансляции DHCPv6.
 
+```
+C:\>ipconfig /all
+FastEthernet0 Connection:(default port)
+   Connection-specific DNS Suffix..: STATEFUL.com 
+   Physical Address................: 0007.EC5C.809D
+   Link-local IPv6 Address.........: FE80::207:ECFF:FE5C:809D
+   IPv6 Address....................: 2001:DB8:ACAD:3:AAA:834F:671B:4BF6
+   IPv4 Address....................: 0.0.0.0
+   Subnet Mask.....................: 0.0.0.0
+   Default Gateway.................: FE80::1
+                                     0.0.0.0
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 149949153
+   DHCPv6 Client DUID..............: 00-01-00-01-92-E7-D4-05-00-07-EC-5C-80-9D
+   DNS Servers.....................: 2001:DB8:ACAD::254
+                                     0.0.0.0
+```
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.2/files/ipconf3.jpg?raw=true)
+
+> c.	Проверьте подключение с помощью пинга IP-адреса интерфейса R1 G0/1.
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.2/files/ping2.jpg?raw=true)
