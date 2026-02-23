@@ -257,6 +257,21 @@ S1(config-if)#sw port-sec max 3
 S1(config-if)#sw port-se violation restrict 
 S1(config-if)#sw port-sec aging time 60
 ```
-
+> c.	Проверим настройки port-security на коммутаторе S1 на интерфейсе F0/6.
+```
+S1#show port-security interface f0/6
+Port Security              : Enabled
+Port Status                : Secure-up
+Violation Mode             : Restrict
+Aging Time                 : 60 mins
+Aging Type                 : Absolute
+SecureStatic Address Aging : Disabled
+Maximum MAC Addresses      : 3
+Total MAC Addresses        : 0
+Configured MAC Addresses   : 0
+Sticky MAC Addresses       : 0
+Last Source Address:Vlan   : 0000.0000.0000:0
+Security Violation Count   : 0
+```
 
 
