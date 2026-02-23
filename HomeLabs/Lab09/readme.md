@@ -273,5 +273,9 @@ Sticky MAC Addresses       : 0
 Last Source Address:Vlan   : 0000.0000.0000:0
 Security Violation Count   : 0
 ```
-
-
+> d.	Включите безопасность порта для F0 / 18 на S2. Настройте каждый активный порт доступа таким образом, чтобы он автоматически добавлял адреса МАС, изученные на этом порту, в текущую конфигурацию.
+```
+S2(config)#int f0/18
+S2(config-if)#sw port-sec
+S2(config-if)#sw port-sec mac sticky
+```
