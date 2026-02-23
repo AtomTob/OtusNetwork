@@ -97,6 +97,7 @@ copy running-config startup-config
 > b.	Настройте маршрут по умолчанию на каждом маршрутизаторе, который указывает на IP-адрес G0/0/0 на другом маршрутизаторе.
 
 ```
+R1(config)#ipv6 route ::1/64 2001:db8:acad:2::2
 R1(config)#int g0/0
 R1(config-if)#ipv6 add 2001:db8:acad:2::1/64
 R1(config-if)#ipv6 add fe80::1 link-local 
@@ -105,6 +106,7 @@ R1(config)#int g0/1
 R1(config-if)#ipv6 add 2001:db8:acad:1::1/64
 R1(config-if)#ipv6 add fe80::1 link-local 
 
+R2(config)#ipv6 route ::1/64 2001:db8:acad:2::1
 R2(config)#int g0/0
 R2(config-if)#ipv6 add 2001:db8:acad:2::2/64
 R2(config-if)#ipv6 add fe80::2 link-local 
@@ -113,4 +115,93 @@ R2(config)#int g0/1
 R2(config-if)#ipv6 add 2001:db8:acad:3::1/64
 R2(config-if)#ipv6 add fe80::1 link-local 
 ```
+
+> c.	Убедитесь, что маршрутизация работает с помощью пинга адреса G0/0/1 R2 из R1
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.2/files/ping1.jpg?raw=true)
+
+##
+### Часть 2. Проверка назначения адреса SLAAC от R1
+
+> Через несколько минут результаты команды ipconfig должны показать, что PC-A присвоил себе адрес из сети 2001:db8:1::/64.
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.2/files/ipconf1.jpg?raw=true)
+
+> Откуда взялась часть адреса с идентификатором хоста?
+
+При использовании SLAAC для назначения адресов IPv6 хостам сервер DHCPv6 не используется, поэтому в этом случае для части адреса хоста используется МАС-адрес устройства.
+
+##
+### Часть 3. Настройка и проверка сервера DHCPv6 на R1
+#### Шаг 1. Более подробно изучите конфигурацию PC-A.
+
+> a.	Выполните команду __ipconfig /all__ на PC-A и посмотрите на результат.
+
+```
+C:\>IPCONFIG /ALL
+
+FastEthernet0 Connection:(default port)
+
+   Connection-specific DNS Suffix..: 
+   Physical Address................: 0030.F2CD.DAA3
+   Link-local IPv6 Address.........: FE80::230:F2FF:FECD:DAA3
+   IPv6 Address....................: 2001:DB8:ACAD:1:230:F2FF:FECD:DAA3
+   Autoconfiguration IP Address....: 169.254.218.163
+   Subnet Mask.....................: 255.255.0.0
+   Default Gateway.................: FE80::1
+                                     0.0.0.0
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 
+   DHCPv6 Client DUID..............: 00-01-00-01-45-55-23-14-00-30-F2-CD-DA-A3
+   DNS Servers.....................: ::
+                                     0.0.0.0
+```
+
+DNS-серверы отсутствуют.
+
+##
+#### Шаг 2. Настройте R1 для предоставления DHCPv6 без состояния для PC-A.
+
+> a.	Создайте пул DHCP IPv6 на R1 с именем R1-STATELESS. В составе этого пула назначьте адрес DNS-сервера как 2001:db8:acad: :1, а имя домена — как stateless.com.
+
+```
+R1(config)#ipv6 dhcp pool R1-STATELESS
+R1(config-dhcpv6)#dns-server 2001:db8:acad::254
+R1(config-dhcpv6)#domain-name STATELESS.com
+```
+
+> b.	Настройте интерфейс G0/0/1 на R1, чтобы предоставить флаг конфигурации OTHER для локальной сети R1 и укажите только что созданный пул DHCP в качестве ресурса DHCP для этого интерфейса.
+
+```
+R1(config)#int g0/1
+R1(config-if)#ipv6 nd other-config-flag
+R1(config-if)#ipv6 dhcp server R1-STATELESS
+```
+
+> c.	Сохраните текущую конфигурацию в файл загрузочной конфигурации.<br>
+> d.	Перезапустите PC-A.<br>
+> e.	Проверьте вывод ipconfig /all и обратите внимание на изменения.<br>
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.2/files/ipconf2.jpg?raw=true)
+
+Появился DNS-суффикс и DNS-сервер.
+
+> f.	Тестирование подключения с помощью пинга IP-адреса интерфейса G0/1 R2.
+
+```
+C:\>ping 2001:db8:acad:3::1
+
+Pinging 2001:db8:acad:3::1 with 32 bytes of data:
+
+Reply from 2001:DB8:ACAD:3::1: bytes=32 time=4ms TTL=254
+Reply from 2001:DB8:ACAD:3::1: bytes=32 time=1ms TTL=254
+Reply from 2001:DB8:ACAD:3::1: bytes=32 time<1ms TTL=254
+Reply from 2001:DB8:ACAD:3::1: bytes=32 time<1ms TTL=254
+
+Ping statistics for 2001:DB8:ACAD:3::1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 4ms, Average = 1ms
+```
+
 
