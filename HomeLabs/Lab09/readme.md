@@ -137,4 +137,97 @@ Fa0/1       1,10,333,999
 int f0/1
 sw noneg
 ```
-> d.	Проверьте с помощью команды show interfaces.
+> d.	Проверьте с помощью команды __show interfaces__.
+```
+S1#show interfaces f0/1 switchport | include Negotiation
+Negotiation of Trunking: Off
+
+S2#show interfaces f0/1 switchport | include Negotiation
+Negotiation of Trunking: Off
+```
+#### Шаг 2. Настройка портов доступа
+> a.	На S1 настройте F0/5 и F0/6 в качестве портов доступа и свяжите их с VLAN 10.
+```
+S1(config)#int ran f0/5-6
+S1(config-if-range)#sw mo acc
+S1(config-if-range)#sw acc vl 10
+```
+> b.	На S2 настройте порт доступа Fa0/18 и свяжите его с VLAN 10.
+```
+S2(config)#int f0/18
+S2(config-if)#sw mo acc
+S2(config-if)#sw acc vl 10
+```
+#### Шаг 3. Безопасность неиспользуемых портов коммутатора.
+> a.	На S1 и S2 переместите неиспользуемые порты из VLAN 1 в VLAN 999 и отключите неиспользуемые порты.
+```
+S1(config)#int ran f0/2-4,fa0/7-24,g0/1-2
+S1(config-if-range)#sw mo acc
+S1(config-if-range)#sw acc vl 999
+
+S2(config)#int ran f0/2-17,f0/19-24,g0/1-2
+S2(config-if-range)#sw mo acc
+S2(config-if-range)#sw acc vl 999
+S2(config-if-range)#shut
+```
+> b.	Убедитесь, что неиспользуемые порты отключены и связаны с VLAN 999, введя команду  
+```
+S1#sh int sta
+Port      Name               Status       Vlan       Duplex  Speed Type
+Fa0/1     To_S2              connected    trunk      auto    auto  10/100BaseTX
+Fa0/2                        disabled 999        auto    auto  10/100BaseTX
+Fa0/3                        disabled 999        auto    auto  10/100BaseTX
+Fa0/4                        disabled 999        auto    auto  10/100BaseTX
+Fa0/5                        connected    10         auto    auto  10/100BaseTX
+Fa0/6     To_PC-A            connected    10         auto    auto  10/100BaseTX
+Fa0/7                        disabled 999        auto    auto  10/100BaseTX
+Fa0/8                        disabled 999        auto    auto  10/100BaseTX
+Fa0/9                        disabled 999        auto    auto  10/100BaseTX
+Fa0/10                       disabled 999        auto    auto  10/100BaseTX
+Fa0/11                       disabled 999        auto    auto  10/100BaseTX
+Fa0/12                       disabled 999        auto    auto  10/100BaseTX
+Fa0/13                       disabled 999        auto    auto  10/100BaseTX
+Fa0/14                       disabled 999        auto    auto  10/100BaseTX
+Fa0/15                       disabled 999        auto    auto  10/100BaseTX
+Fa0/16                       disabled 999        auto    auto  10/100BaseTX
+Fa0/17                       disabled 999        auto    auto  10/100BaseTX
+Fa0/18                       disabled 999        auto    auto  10/100BaseTX
+Fa0/19                       disabled 999        auto    auto  10/100BaseTX
+Fa0/20                       disabled 999        auto    auto  10/100BaseTX
+Fa0/21                       disabled 999        auto    auto  10/100BaseTX
+Fa0/22                       disabled 999        auto    auto  10/100BaseTX
+Fa0/23                       disabled 999        auto    auto  10/100BaseTX
+Fa0/24                       disabled 999        auto    auto  10/100BaseTX
+Gig0/1                       disabled 999        auto    auto  10/100BaseTX
+Gig0/2                       disabled 999        auto    auto  10/100BaseTX
+
+S2#sh int sta
+Port      Name               Status       Vlan       Duplex  Speed Type
+Fa0/1     To_S1              connected    trunk      auto    auto  10/100BaseTX
+Fa0/2                        disabled 999        auto    auto  10/100BaseTX
+Fa0/3                        disabled 999        auto    auto  10/100BaseTX
+Fa0/4                        disabled 999        auto    auto  10/100BaseTX
+Fa0/5                        disabled 999        auto    auto  10/100BaseTX
+Fa0/6                        disabled 999        auto    auto  10/100BaseTX
+Fa0/7                        disabled 999        auto    auto  10/100BaseTX
+Fa0/8                        disabled 999        auto    auto  10/100BaseTX
+Fa0/9                        disabled 999        auto    auto  10/100BaseTX
+Fa0/10                       disabled 999        auto    auto  10/100BaseTX
+Fa0/11                       disabled 999        auto    auto  10/100BaseTX
+Fa0/12                       disabled 999        auto    auto  10/100BaseTX
+Fa0/13                       disabled 999        auto    auto  10/100BaseTX
+Fa0/14                       disabled 999        auto    auto  10/100BaseTX
+Fa0/15                       disabled 999        auto    auto  10/100BaseTX
+Fa0/16                       disabled 999        auto    auto  10/100BaseTX
+Fa0/17                       disabled 999        auto    auto  10/100BaseTX
+Fa0/18    To_PC-B            connected    10         auto    auto  10/100BaseTX
+Fa0/19                       disabled 999        auto    auto  10/100BaseTX
+Fa0/20                       disabled 999        auto    auto  10/100BaseTX
+Fa0/21                       disabled 999        auto    auto  10/100BaseTX
+Fa0/22                       disabled 999        auto    auto  10/100BaseTX
+Fa0/23                       disabled 999        auto    auto  10/100BaseTX
+Fa0/24                       disabled 999        auto    auto  10/100BaseTX
+Gig0/1                       disabled 999        auto    auto  10/100BaseTX
+Gig0/2                       disabled 999        auto    auto  10/100BaseTX
+```
+#### Шаг 4. Документирование и реализация функций безопасности порта.
