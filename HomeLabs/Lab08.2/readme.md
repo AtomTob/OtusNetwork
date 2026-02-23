@@ -297,3 +297,9 @@ FastEthernet0 Connection:(default port)
 
 > c.	Проверьте подключение с помощью пинга IP-адреса интерфейса R1 G0/1.
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.2/files/ping2.jpg?raw=true)
+
+DHCP-Сервер выдал хосту все необходимые параметры.
+Пинги до R1 успешно проходят.
+
+
+Файл проекта по лабораторной работе [здесь](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.2/files/Lab8.2.pkt)
