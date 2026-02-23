@@ -165,3 +165,165 @@ R1(config-subif)#description NativeVLAN
 
 > c.	Убедитесь, что вспомогательные интерфейсы работают.<br>
 
+```
+R1#sh int g0/1.100
+GigabitEthernet0/1.100 is up, line protocol is up (connected)
+  Hardware is PQUICC_FEC, address is 0060.4761.9302 (bia 0060.4761.9302)
+  Internet address is 192.168.1.1/26
+  MTU 1500 bytes, BW 100000 Kbit, DLY 100 usec, 
+     reliability 255/255, txload 1/255, rxload 1/255
+  Encapsulation 802.1Q Virtual LAN, Vlan ID 100
+  ARP type: ARPA, ARP Timeout 04:00:00, 
+  Last clearing of "show interface" counters never
+
+R1#sh int g0/1.200
+GigabitEthernet0/1.200 is up, line protocol is up (connected)
+  Hardware is PQUICC_FEC, address is 0060.4761.9302 (bia 0060.4761.9302)
+  Internet address is 192.168.1.65/27
+  MTU 1500 bytes, BW 100000 Kbit, DLY 100 usec, 
+     reliability 255/255, txload 1/255, rxload 1/255
+  Encapsulation 802.1Q Virtual LAN, Vlan ID 200
+  ARP type: ARPA, ARP Timeout 04:00:00, 
+  Last clearing of "show interface" counters never
+
+R1#sh int g0/1.1000
+GigabitEthernet0/1.1000 is up, line protocol is up (connected)
+  Hardware is PQUICC_FEC, address is 0060.4761.9302 (bia 0060.4761.9302)
+  MTU 1500 bytes, BW 100000 Kbit, DLY 100 usec, 
+     reliability 255/255, txload 1/255, rxload 1/255
+  Encapsulation 802.1Q Virtual LAN, Vlan ID 1000
+  ARP type: ARPA, ARP Timeout 04:00:00, 
+  Last clearing of "show interface" counters never
+```
+
+##
+
+##### Шаг 5.	Настройте G0/1 на R2, затем G0/0/0 и статическую маршрутизацию для обоих маршрутизаторов
+
+> a.	Настройте G0/0/1 на R2 с первым IP-адресом подсети C, рассчитанным ранее.<br>
+
+```
+R2(config)#int g0/1
+R2(config-if)#ip add 192.168.1.97 255.255.255.240
+R2(config-if)#no shut
+```
+
+> b.	Настройте интерфейс G0/0/0 для каждого маршрутизатора на основе приведенной выше таблицы IP-адресации.<br>
+
+```
+R1(config)#int g0/0
+R1(config-if)#ip add 10.0.0.1 255.255.255.252
+R1(config-if)#no shut
+
+R2(config)#int g0/0
+R2(config-if)#ip add 10.0.0.2 255.255.255.252
+R2(config-if)#no shut
+```
+
+> c.	Настройте маршрут по умолчанию на каждом маршрутизаторе, указываемом на IP-адрес G0/0/0 на другом маршрутизаторе.<br>
+
+```
+R1(config)#ip route 0.0.0.0 0.0.0.0 10.0.0.2
+R2(config)#ip route 0.0.0.0 0.0.0.0 10.0.0.1
+```
+
+> d.	Убедитесь, что статическая маршрутизация работает с помощью пинга до адреса G0/0/1 R2 от R1.<br>
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab08.1/files/Ping01.jpg?raw=true)
+
+e.	Сохранил текущую конфигурацию в файл загрузочной конфигурации.
+
+##
+
+##### Шаг 6.	Настройте базовые параметры каждого коммутатора.
+
+Оба коммутатора настроены, согласно скрипту ниже, меняется лишь hostname и время:
+
+```
+hostname S2
+no ip domain-lookup 
+enable secret 0 class
+line con 0
+password cisco
+logging synchronous
+login
+exit
+line vty 0 15
+password cisco
+login
+exit
+service password-encryption
+banner motd ^C!!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!^C
+clock timezone EKB 5 0
+ip domain-name home.local
+crypto key generate rsa general-keys modulus 2048
+ip ssh version 2
+username admin secret 5 $1$mERr$qJb.eHvBN7S590aq.dpRL.
+line vty 0 15
+transport input ssh
+login local
+end
+clock set 10:00:00 23 feb 2026
+copy running-config startup-config
+```
+
+##
+
+##### Шаг 7.	Создайте сети VLAN на коммутаторе S1.
+
+> a.	Создайте необходимые VLAN на коммутаторе 1 и присвойте им имена из приведенной выше таблицы.
+```
+S1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)#vlan 100
+S1(config-vlan)#name Clients
+S1(config-vlan)#vlan 200
+S1(config-vlan)#name MGMNT
+S1(config-vlan)#vlan 999
+S1(config-vlan)#name Parking_Lot
+S1(config-vlan)#vlan 1000
+S1(config-vlan)#name NativeVLAN
+```
+
+> b.	Настройте и активируйте интерфейс управления на S1 (VLAN 200), используя второй IP-адрес из подсети, рассчитанный ранее. Кроме того установите шлюз по умолчанию на S1.
+
+```
+S1(config)#int vl 200
+S1(config-if)#ip add 192.168.1.66 255.255.255.224
+S1(config-if)#ex
+S1(config)#ip default-gateway 192.168.1.65
+```
+
+> c.	Настройте и активируйте интерфейс управления на S2 (VLAN 1), используя второй IP-адрес из подсети, рассчитанный ранее. Кроме того, установите шлюз по умолчанию на S2
+
+```
+S2(config)#int vl 1
+S2(config-if)#ip add 192.168.1.98 255.255.255.240
+S2(config-if)#no shut
+S2(config-if)#ex
+S2(config)#ip default-gateway 192.168.1.97
+```
+
+> d.	Назначьте все неиспользуемые порты S1 VLAN Parking_Lot, настройте их для статического режима доступа и административно деактивируйте их. На S2 административно деактивируйте все неиспользуемые порты.
+
+```
+S1(config)#int ra f0/1-4, f0/7-24, g0/1-2
+S1(config-if-range)#sw mode acc
+S1(config-if-range)#sw acc vl 999
+S1(config-if-range)#shut
+```
+
+```
+S2(config)#int ra f0/1-4, f0/6-17, f0/19-24, g0/1-2
+S2(config-if-range)#shut
+```
+
+##
+
+##### Шаг 8.	Назначьте сети VLAN соответствующим интерфейсам коммутатора.
+
+> a.	Назначьте используемые порты соответствующей VLAN (указанной в таблице VLAN выше) и настройте их для режима статического доступа.
+
+```
+
+```
