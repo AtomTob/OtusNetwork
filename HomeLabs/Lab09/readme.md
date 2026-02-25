@@ -425,6 +425,8 @@ Port 18 (FastEthernet0/18) of VLAN0010 is designated forwarding
 ##
 #### Шаг 7. Проверьте наличие сквозного ⁪подключения.
 > Проверьте PING свзяь между всеми устройствами в таблице IP-адресации. В случае сбоя проверки связи может потребоваться отключить брандмауэр на хостах.
+
+
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/ping_s1.jpg?raw=true)
 
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/ping_s2.jpg?raw=true)
@@ -433,3 +435,40 @@ Port 18 (FastEthernet0/18) of VLAN0010 is designated forwarding
 
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/ping_pcb.jpg?raw=true)
 
+##
+### Вопросы для повторения.
+
+> 1.	С точки зрения безопасности порта на S2, почему нет значения таймера для оставшегося возраста в минутах, когда было сконфигурировано динамическое обучение - sticky?
+
+В режиме динамического изучения sticky изученный МАС-адрес передается в рабочей конфигурации и запись становится статичной.<br>
+Соответственно, таймер устаревания не используется для статической записи.
+
+
+##
+> 2.	Что касается безопасности порта на S2, если вы загружаете скрипт текущей конфигурации на S2, почему порту 18 на PC-B никогда не получит IP-адрес через DHCP?
+
+Если я правильно понял вопрос, то при копировании нижеследующего скрипта настроек с порта F0/18:
+```
+ description To_PC-B
+ switchport access vlan 10
+ ip dhcp snooping limit rate 5
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky 
+ switchport port-security violation protect 
+ switchport port-security mac-address sticky 0090.2BE8.99BC
+ switchport port-security aging time 60
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+```
+в команде __switchport port-security mac-address sticky 0090.2BE8.99BC__ жестко задан МАС-адрес подключенного устройства.<br>
+При загрузке скрипта в чистую конфигурацию велика вероятность, что у подключенного устройства МАС-адрес будет совершенно другой.<br>
+Соответственно, коммутатор заблокирует порт, как не отвечающих политикам безопасности и хост не получит IP-адрес.
+
+> 3.	Что касается безопасности порта, в чем разница между типом абсолютного устаревания и типом устаревание по неактивности?
+
+При абсолютном устаревании адреса на порту будут удаляться при истечении установленного времени устаревания без каки-либо доп.условий.<br>
+Тогда как при устаревании по неактивности адреса удаляются только если неактивны в течение заданного периода.
+
+Файл проекта по лабораторной работе [здесь](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/lab09.pkt)
