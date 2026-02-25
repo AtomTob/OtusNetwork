@@ -145,6 +145,7 @@ Negotiation of Trunking: Off
 S2#show interfaces f0/1 switchport | include Negotiation
 Negotiation of Trunking: Off
 ```
+##
 #### Шаг 2. Настройка портов доступа
 > a.	На S1 настройте F0/5 и F0/6 в качестве портов доступа и свяжите их с VLAN 10.
 ```
@@ -158,6 +159,7 @@ S2(config)#int f0/18
 S2(config-if)#sw mo acc
 S2(config-if)#sw acc vl 10
 ```
+##
 #### Шаг 3. Безопасность неиспользуемых портов коммутатора.
 > a.	На S1 и S2 переместите неиспользуемые порты из VLAN 1 в VLAN 999 и отключите неиспользуемые порты.
 ```
@@ -230,8 +232,9 @@ Fa0/24                       disabled 999        auto    auto  10/100BaseTX
 Gig0/1                       disabled 999        auto    auto  10/100BaseTX
 Gig0/2                       disabled 999        auto    auto  10/100BaseTX
 ```
+##
 #### Шаг 4. Документирование и реализация функций безопасности порта.
-> a.	На S1, введите команду __show port-security interface f0/6__  для отображения настроек по умолчанию безопасности порта для интерфейса F0/6. Запишите свои ответы ниже.
+> __a.	На S1, введите команду __show port-security interface f0/6__  для отображения настроек по умолчанию безопасности порта для интерфейса F0/6. Запишите свои ответы ниже.__
 
 
 |Функция	|Настройка по умолчанию|
@@ -279,7 +282,7 @@ S2(config)#int f0/18
 S2(config-if)#sw port-sec
 S2(config-if)#sw port-sec mac sticky
 ```
-> e.	Настройте следующие параметры безопасности порта на S2 F/18:<br>
+> __e.	Настройте следующие параметры безопасности порта на S2 F/18:__ <br>
 > o	Максимальное количество записей MAC-адресов: 2<br>
 > o	Тип безопасности: Protect<br>
 > o	Aging time: 60 мин.<br>
@@ -290,3 +293,131 @@ S2(config-if)#sw port-sec maximum 2
 S2(config-if)#sw port-sec violation protect
 S2(config-if)#sw port-sec aging time 60
 ```
+> f.	Проверка функции безопасности портов на S2 F0/18.
+```
+S2#sh port-sec int f0/18
+Port Security              : Enabled
+Port Status                : Secure-up
+Violation Mode             : Protect
+Aging Time                 : 60 mins
+Aging Type                 : Absolute
+SecureStatic Address Aging : Disabled
+Maximum MAC Addresses      : 2
+Total MAC Addresses        : 1
+Configured MAC Addresses   : 0
+Sticky MAC Addresses       : 1
+Last Source Address:Vlan   : 0090.2BE8.99BC:10
+Security Violation Count   : 0
+
+S2#sh port-sec add
+               Secure Mac Address Table
+-----------------------------------------------------------------------------
+Vlan    Mac Address       Type                          Ports   Remaining Age
+                                                                   (mins)
+----    -----------       ----                          -----   -------------
+  10    0090.2BE8.99BC    SecureSticky                  Fa0/18       -
+-----------------------------------------------------------------------------
+Total Addresses in System (excluding one mac per port)     : 0
+Max Addresses limit in System (excluding one mac per port) : 1024
+```
+##
+#### Шаг 5. Реализовать безопасность DHCP snooping.
+> a.	На S2 включите DHCP snooping и настройте DHCP snooping во VLAN 10.
+```
+S2(config)#ip dhcp snooping 
+S2(config)#ip dhcp snooping vlan 10
+```
+> b.	Настройте магистральные порты на S2 как доверенные порты.
+```
+S2(config)#int f0/1
+S2(config-if)#ip dhcp snooping trust
+```
+> c.	Ограничьте ненадежный порт Fa0/18 на S2 пятью DHCP-пакетами в секунду.
+```
+S2(config)#int f0/18
+S2(config-if)#no ip dhcp snooping limit rate 5
+```
+> d.	Проверка DHCP Snooping на S2.
+```
+S2#sh ip dhcp snooping 
+Switch DHCP snooping is enabled
+DHCP snooping is configured on following VLANs:
+10
+Insertion of option 82 is enabled
+Option 82 on untrusted port is not allowed
+Verification of hwaddr field is enabled
+Interface                  Trusted    Rate limit (pps)
+-----------------------    -------    ----------------
+FastEthernet0/1            yes        unlimited       
+FastEthernet0/18           no         5   
+```
+> e.	В командной строке на PC-B освободите, а затем обновите IP-адрес.
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/iprenew.jpg?raw=true)
+
+> f.	Проверьте привязку отслеживания DHCP с помощью команды __show ip dhcp snooping binding__.
+```
+S2#show ip dhcp snooping binding
+MacAddress          IpAddress        Lease(sec)  Type           VLAN  Interface
+------------------  ---------------  ----------  -------------  ----  -----------------
+00:90:2B:E8:99:BC   192.168.10.10    0           dhcp-snooping  10    FastEthernet0/18
+Total number of bindings: 1
+```
+
+##
+#### Шаг 6. Реализация PortFast и BPDU Guard.
+> a.	Настройте PortFast на всех портах доступа, которые используются на обоих коммутаторах.<br>
+> b.	Включите защиту BPDU на портах доступа VLAN 10 S1 и S2, подключенных к PC-A и PC-B.
+
+```
+S1(config)#spanning-tree portfast bpduguard default 
+S1(config)#int f0/6
+S1(config-if)#spann portfast 
+%Warning: portfast should only be enabled on ports connected to a single
+host. Connecting hubs, concentrators, switches, bridges, etc... to this
+interface  when portfast is enabled, can cause temporary bridging loops.
+Use with CAUTION
+%Portfast has been configured on FastEthernet0/6 but will only
+have effect when the interface is in a non-trunking mode.
+S1(config-if)#spanning-tree bpduguard enable
+
+
+S2(config)#spanning-tree portfast bpduguard default 
+S2(config)#int f0/18
+S2(config-if)#spanning-tree portfast 
+%Warning: portfast should only be enabled on ports connected to a single
+host. Connecting hubs, concentrators, switches, bridges, etc... to this
+interface  when portfast is enabled, can cause temporary bridging loops.
+Use with CAUTION
+%Portfast has been configured on FastEthernet0/18 but will only
+have effect when the interface is in a non-trunking mode.
+S2(config-if)#spanning-tree bpduguard enable
+```
+
+> c.	Убедитесь, что защита BPDU и PortFast включены на соответствующих портах.
+```
+S1#show spanning-tree interface f0/6 detail
+Port 6 (FastEthernet0/6) of VLAN0010 is designated forwarding
+  Port path cost 19, Port priority 128, Port Identifier 128.6
+  Designated root has priority 32778, address 0009.7CAB.7B45
+  Designated bridge has priority 32778, address 0009.7CAB.7B45
+  Designated port id is 128.6, designated path cost 19
+  Timers: message age 16, forward delay 0, hold 0
+  Number of transitions to forwarding state: 1
+  The port is in the portfast mode
+  Link type is point-to-point by default
+  ```
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/bpdus1.jpg?raw=true)
+
+```
+S2#show spanning-tree interface f0/18 detail
+Port 18 (FastEthernet0/18) of VLAN0010 is designated forwarding
+  Port path cost 19, Port priority 128, Port Identifier 128.18
+  Designated root has priority 32778, address 0009.7CAB.7B45
+  Designated bridge has priority 32778, address 0060.2FEA.B7A9
+  Designated port id is 128.18, designated path cost 19
+  Timers: message age 16, forward delay 0, hold 0
+  Number of transitions to forwarding state: 1
+  The port is in the portfast mode
+  Link type is point-to-point by default
+```
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/bpdu2.jpg?raw=true)
