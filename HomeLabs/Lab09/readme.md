@@ -421,3 +421,15 @@ Port 18 (FastEthernet0/18) of VLAN0010 is designated forwarding
   Link type is point-to-point by default
 ```
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/bpdu2.jpg?raw=true)
+
+##
+#### Шаг 7. Проверьте наличие сквозного ⁪подключения.
+> Проверьте PING свзяь между всеми устройствами в таблице IP-адресации. В случае сбоя проверки связи может потребоваться отключить брандмауэр на хостах.
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/ping_s1.jpg?raw=true)
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/ping_s2.jpg?raw=true)
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/ping_pca.jpg?raw=true)
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab09/files/ping_pcb.jpg?raw=true)
+
