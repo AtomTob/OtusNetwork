@@ -279,11 +279,14 @@ S2(config)#int f0/18
 S2(config-if)#sw port-sec
 S2(config-if)#sw port-sec mac sticky
 ```
-> e.	Настройте следующие параметры безопасности порта на S2 F / 18:
-> o	Максимальное количество записей MAC-адресов: 2
-> o	Тип безопасности: Protect
-> o	Aging time: 60 мин.
+> e.	Настройте следующие параметры безопасности порта на S2 F/18:<br>
+> o	Максимальное количество записей MAC-адресов: 2<br>
+> o	Тип безопасности: Protect<br>
+> o	Aging time: 60 мин.<br>
 
 ```
-
+S2(config)#int f0/18
+S2(config-if)#sw port-sec maximum 2
+S2(config-if)#sw port-sec violation protect
+S2(config-if)#sw port-sec aging time 60
 ```
