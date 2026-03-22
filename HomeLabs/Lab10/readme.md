@@ -17,3 +17,7 @@
 #### Шаг 1. Создайте сеть согласно топологии.
 
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab10/files/topo2.jpg?raw=true)
+
+#### Шаг 2. Произведите базовую настройку маршрутизаторов.
+
+
