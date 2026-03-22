@@ -87,6 +87,20 @@ R2(config-router)#int g 0/1
 R2(config-if)#ip ospf 56 area 0
 ```
 
+> e.	Только на R2 добавьте конфигурацию, необходимую для объявления сети Loopback 1 в область OSPF 0.
+```
+R2(config)#int loopback 1
+R2(config-if)#ip ospf 56 area 0
+```
 
+> f.	Убедитесь, что OSPFv2 работает между маршрутизаторами. Выполните команду, чтобы убедиться, что R1 и R2 сформировали смежность.
+```
+R1#sh ip ospf neighbor 
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           1   FULL/BDR        00:00:32    10.53.0.2       GigabitEthernet0/1
 
+R2#sh ip ospf neighbor 
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+1.1.1.1           1   FULL/DR         00:00:39    10.53.0.1       GigabitEthernet0/1
+```
 
