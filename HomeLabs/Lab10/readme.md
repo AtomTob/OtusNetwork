@@ -87,3 +87,6 @@ R2(config-router)#int g 0/1
 R2(config-if)#ip ospf 56 area 0
 ```
 
+
+
+
