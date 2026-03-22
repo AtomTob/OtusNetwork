@@ -176,3 +176,12 @@ R1(config)#router ospf 56
 R1(config-router)#default-information originate
 ```
 > d.	Добавьте конфигурацию, необходимую для OSPF для обработки R2 Loopback 1 как сети точка-точка. Это приводит к тому, что OSPF объявляет Loopback 1 использует маску подсети интерфейса.
+```
+R2(config)#int l1
+R2(config-if)#ip ospf network point-to-point 
+```
+> e.	Только на R2 добавьте конфигурацию, необходимую для предотвращения отправки объявлений OSPF в сеть Loopback 1.
+```
+R2(config)#rout osp 56
+R2(config-router)#passive-interface l1
+```
