@@ -131,4 +131,48 @@ Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/2 ms
 #### Шаг 1. Реализация различных оптимизаций на каждом маршрутизаторе.
 
 > a.	На R1 настройте приоритет OSPF интерфейса G0/0/1 на 50, чтобы убедиться, что R1 является назначенным маршрутизатором.
+```
+R1(config)#int g0/1
+R1(config-if)#ip ospf priority 50
+R1#clear ip ospf process 
+Reset ALL OSPF processes? [no]: yes
+19:59:17: %OSPF-5-ADJCHG: Process 56, Nbr 2.2.2.2 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Adjacency forced to reset
+19:59:17: %OSPF-5-ADJCHG: Process 56, Nbr 2.2.2.2 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Interface down or detached
+19:59:19: %OSPF-5-ADJCHG: Process 56, Nbr 2.2.2.2 on GigabitEthernet0/1 from LOADING to FULL, Loading Done
 
+R1#sh ip ospf neighbor 
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           1   FULL/BDR        00:00:34    10.53.0.2       GigabitEthernet0/1
+```
+
+> b.	Настройте таймеры OSPF на G0/0/1 каждого маршрутизатора для таймера приветствия, составляющего 30 секунд.
+```
+R1(config)#int g0/1
+R1(config-if)#ip ospf hello-interval 30
+20:52:18: %OSPF-5-ADJCHG: Process 56, Nbr 2.2.2.2 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Dead timer expired
+20:52:18: %OSPF-5-ADJCHG: Process 56, Nbr 2.2.2.2 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Interface down or detached
+
+R1#sh ip ospf neighbor 
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           1   FULL/BDR        00:00:29    10.53.0.2       GigabitEthernet0/1
+
+R2(config)#int g0/1
+R2(config-if)#ip ospf hello-interval 30
+20:49:22: %OSPF-5-ADJCHG: Process 56, Nbr 1.1.1.1 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Dead timer expired
+20:49:22: %OSPF-5-ADJCHG: Process 56, Nbr 1.1.1.1 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Interface down or detached
+20:49:52: %OSPF-5-ADJCHG: Process 56, Nbr 1.1.1.1 on GigabitEthernet0/1 from LOADING to FULL, Loading Done
+
+R2#sh ip ospf nei
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+1.1.1.1          50   FULL/DR         00:00:27    10.53.0.1       GigabitEthernet0/1
+```
+
+> c.	На R1 настройте статический маршрут по умолчанию, который использует интерфейс Loopback 1 в качестве интерфейса выхода. Затем распространите маршрут по умолчанию в OSPF. Обратите внимание на сообщение консоли после установки маршрута по умолчанию.
+```
+R1(config)#ip route 0.0.0.0 0.0.0.0 loopback 1
+%Default route without gateway, if not a point-to-point interface, may impact performance
+
+R1(config)#router ospf 56
+R1(config-router)#default-information originate
+```
+> d.	Добавьте конфигурацию, необходимую для OSPF для обработки R2 Loopback 1 как сети точка-точка. Это приводит к тому, что OSPF объявляет Loopback 1 использует маску подсети интерфейса.
