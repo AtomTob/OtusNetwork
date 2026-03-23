@@ -185,3 +185,29 @@ R2(config-if)#ip ospf network point-to-point
 R2(config)#rout osp 56
 R2(config-router)#passive-interface l1
 ```
+> f.	Измените базовую пропускную способность для маршрутизаторов. После этой настройки перезапустите OSPF с помощью команды clear ip ospf process . Обратите внимание на сообщение консоли после установки новой опорной полосы пропускания.
+```
+R1(config)#router ospf 56
+R1(config-router)#auto-cost reference-bandwidth 1000
+% OSPF: Reference bandwidth is changed.
+        Please ensure reference bandwidth is consistent across all routers.
+
+R1#clear ip ospf process 
+Reset ALL OSPF processes? [no]: yes
+04:46:14: %OSPF-5-ADJCHG: Process 56, Nbr 2.2.2.2 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Adjacency forced to reset
+04:46:14: %OSPF-5-ADJCHG: Process 56, Nbr 2.2.2.2 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Interface down or detached
+04:46:37: %OSPF-5-ADJCHG: Process 56, Nbr 2.2.2.2 on GigabitEthernet0/1 from LOADING to FULL, Loading Done
+
+
+R2(config)#router ospf 56
+R2(config-router)#auto-cost reference-bandwidth 1000
+% OSPF: Reference bandwidth is changed.
+        Please ensure reference bandwidth is consistent across all routers.
+
+R2#clear ip ospf pro
+Reset ALL OSPF processes? [no]: yes
+04:47:11: %OSPF-5-ADJCHG: Process 56, Nbr 1.1.1.1 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Adjacency forced to reset
+04:47:11: %OSPF-5-ADJCHG: Process 56, Nbr 1.1.1.1 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Interface down or detached
+04:47:38: %OSPF-5-ADJCHG: Process 56, Nbr 1.1.1.1 on GigabitEthernet0/1 from LOADING to FULL, Loading Done
+```
+
