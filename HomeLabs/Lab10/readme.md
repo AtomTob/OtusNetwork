@@ -211,3 +211,32 @@ Reset ALL OSPF processes? [no]: yes
 04:47:38: %OSPF-5-ADJCHG: Process 56, Nbr 1.1.1.1 on GigabitEthernet0/1 from LOADING to FULL, Loading Done
 ```
 
+##
+### Шаг 2. Убедитесь, что оптимизация OSPFv2 реализовалась.
+> a.	Выполните команду show ip ospf interface g0/0/1 на R1 и убедитесь, что приоритет интерфейса установлен равным 50, а временные интервалы — Hello 30, Dead 120, а тип сети по умолчанию — Broadcast
+```
+R1#sh ip os int g0/1
+GigabitEthernet0/1 is up, line protocol is up
+  Internet address is 10.53.0.1/24, Area 0
+  Process ID 56, Router ID 1.1.1.1, Network Type BROADCAST, Cost: 10
+  Transmit Delay is 1 sec, State DR, Priority 50
+  Designated Router (ID) 1.1.1.1, Interface address 10.53.0.1
+  Backup Designated Router (ID) 2.2.2.2, Interface address 10.53.0.2
+  Timer intervals configured, Hello 30, Dead 40, Wait 40, Retransmit 5
+    Hello due in 00:00:00
+  Index 1/1, flood queue length 0
+  Next 0x0(0)/0x0(0)
+  Last flood scan length is 1, maximum is 1
+  Last flood scan time is 0 msec, maximum is 0 msec
+  Neighbor Count is 1, Adjacent neighbor count is 1
+    Adjacent with neighbor 2.2.2.2  (Backup Designated Router)
+  Suppress hello for 0 neighbor(s)
+```
+__P.S. В данном случае после смены Hello-интервала, в следствие ограничений Cisco Packet Tracer, не перечитался Dead-интервал. Все остальные параметры соответствуют.__
+
+> b.	На R1 выполните команду __show ip route ospf__, чтобы убедиться, что сеть R2 Loopback1 присутствует в таблице маршрутизации. Обратите внимание на разницу в метрике между этим выходным и предыдущим выходным. Также обратите внимание, что маска теперь составляет 24 бита, в отличие от 32 битов, ранее объявленных.
+```
+R1#show ip route ospf
+O    192.168.1.0 [110/10] via 10.53.0.2, 00:12:26, GigabitEthernet0/1
+```
+
