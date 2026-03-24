@@ -32,4 +32,45 @@
 |999	|ParkingLot	|S2: F0/2-4, F0/6-17, F0/19-24, G0/1-2|
 |1000|	Собственная|	—|
 
+## 
+### Часть 1. Создание сети и настройка основных параметров устройства.
+#### Шаг 1. Создайте сеть согласно топологии.
 
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/topo2.jpg?raw=true)
+
+##
+#### Шаг 2. Произведите базовую настройку маршрутизаторов.
+```
+hostname R2
+no ip domain-lookup
+enable secret 0 class
+line con 0
+password cisco
+login
+exit
+line vty 0 15
+password cisco
+login
+exit
+service password-encryption
+banner motd ^C!!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!^C
+clock timezone EKB 5 0
+ip domain-name home.local 
+crypto key generate rsa general-keys modulus 2048 
+ip ssh version 2 
+username admin secret 5 $1$mERr$qJb.eHvBN7S590aq.dpRL. 
+line vty 0 4 
+transport input ssh 
+login local 
+exit
+exit
+clock set 21:00:00 24 march 2026
+copy running-config startup-config
+```
+#### Шаг 3. Настройте базовые параметры каждого коммутатора.
+Настроено по аналогии с маршрутизаторами
+
+## 
+### Часть 2. Настройка сетей VLAN на коммутаторах.
+##### Шаг 1. Создайте сети VLAN на коммутаторах.
+> a.	Создайте необходимые VLAN и назовите их на каждом коммутаторе из приведенной выше таблицы.
