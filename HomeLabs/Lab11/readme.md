@@ -124,4 +124,114 @@ S1(config)#int f0/5
 S1(config-if)#sw mo acc
 S1(config-if)#sw acc vl 30
 
+S2(config)#int f0/5
+S2(config-if)#sw mo acc
+S2(config-if)#sw acc vl 20
+S2(config-if)#int f0/18
+S2(config-if)#sw mo acc
+S2(config-if)#sw acc vl 40
 ```
+
+> b.	Выполните команду __show vlan brief__, чтобы убедиться, что сети VLAN назначены правильным интерфейсам.
+```
+S1#sh vl br
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Fa0/1, Fa0/6
+20   Management                       active    
+30   Operations                       active    Fa0/5
+40   Sales                            active    
+999  ParkingLot                       active    Fa0/2, Fa0/3, Fa0/4, Fa0/7
+                                                Fa0/8, Fa0/9, Fa0/10, Fa0/11
+                                                Fa0/12, Fa0/13, Fa0/14, Fa0/15
+                                                Fa0/16, Fa0/17, Fa0/18, Fa0/19
+                                                Fa0/20, Fa0/21, Fa0/22, Fa0/23
+                                                Fa0/24, Gig0/1, Gig0/2
+1000 NativeVlan                       active    
+1002 fddi-default                     active    
+1003 token-ring-default               active    
+1004 fddinet-default                  active    
+1005 trnet-default                    active
+
+S2#sh vl br
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Fa0/1
+20   Management                       active    Fa0/5
+30   Operations                       active    
+40   Sales                            active    Fa0/18
+999  ParkingLot                       active    Fa0/2, Fa0/3, Fa0/4, Fa0/6
+                                                Fa0/7, Fa0/8, Fa0/9, Fa0/10
+                                                Fa0/11, Fa0/12, Fa0/13, Fa0/14
+                                                Fa0/15, Fa0/16, Fa0/17, Fa0/19
+                                                Fa0/20, Fa0/21, Fa0/22, Fa0/23
+                                                Fa0/24, Gig0/1, Gig0/2
+1000 NativeVlan                       active    
+1002 fddi-default                     active    
+1003 token-ring-default               active    
+1004 fddinet-default                  active    
+1005 trnet-default                    active
+```
+
+##
+### Часть 3. Настройте транки (магистральные каналы).
+#### Шаг 1. Вручную настройте магистральный интерфейс F0/1.
+> a.	Измените режим порта коммутатора на интерфейсе F0/1, чтобы принудительно создать магистральную связь. Не забудьте сделать это на обоих коммутаторах. <br>
+> b.	В рамках конфигурации транка установите для native vlan значение 1000 на обоих коммутаторах. При настройке двух интерфейсов для разных собственных VLAN сообщения об ошибках могут отображаться временно. <br>
+> c.	В качестве другой части конфигурации транка укажите, что VLAN 20, 30, 40 и 1000 разрешены в транке. <br>
+```
+S1(config)#int f0/1
+S1(config-if)#sw mo tr
+S1(config-if)#sw trunk native vl 1000
+S1(config-if)#sw trunk all vl 20,30,40,1000
+
+S2(config)#int f0/1
+S2(config-if)#sw mo tr
+S2(config-if)#sw tr nati vl 1000
+S2(config-if)#sw trunk all vl 20,30,40,1000
+```
+
+> d.	Выполните команду __show interfaces trunk__ для проверки портов магистрали, собственной VLAN и разрешенных VLAN через магистраль.
+```
+S1#show interfaces trunk
+Port        Mode         Encapsulation  Status        Native vlan
+Fa0/1       on           802.1q         trunking      1000
+
+Port        Vlans allowed on trunk
+Fa0/1       20,30,40,1000
+
+Port        Vlans allowed and active in management domain
+Fa0/1       20,30,40,1000
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Fa0/1       20,30,40,1000
+```
+##
+#### Шаг 2. Вручную настройте магистральный интерфейс F0/5 на коммутаторе S1.
+> a.	Настройте интерфейс S1 F0/5 с теми же параметрами транка, что и F0/1. Это транк до маршрутизатора.
+> b.	Сохраните текущую конфигурацию в файл загрузочной конфигурации.
+> c.	Используйте команду show interfaces trunk для проверки настроек транка.
+
+```
+S1(config)#int f0/5
+S1(config-if)#sw mo tr
+S1(config-if)#sw tr al vl 20,30,40,1000
+S1(config-if)#sw tr na vl 1000
+
+S1#sh int tr
+Port        Mode         Encapsulation  Status        Native vlan
+Fa0/1       on           802.1q         trunking      1000
+Port        Vlans allowed on trunk
+Fa0/1       20,30,40,1000
+Port        Vlans allowed and active in management domain
+Fa0/1       20,30,40,1000
+Port        Vlans in spanning tree forwarding state and not pruned
+Fa0/1       20,30,40,1000
+```
+Данные не изменились, т.к. интерфейс на соседнем маршрутизаторе выключен.
+
+##
+### Часть 4.	Настройте маршрутизацию.
+#### Шаг 1. Настройка маршрутизации между сетями VLAN на R1.
+
+
