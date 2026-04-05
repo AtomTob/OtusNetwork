@@ -421,12 +421,15 @@ R1(config-subif)#ip access-group Operations in
 | ------------- |:------------------:|------------- |------------- |------------- |
  |1  |PC-A	 |Ping |	10.40.0.10 |	Сбой |
  |1 | PC-A |	Ping	 |10.20.0.1	 |Успех |
+ 
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/foto1.jpg?raw=true)
 
-
+##
   |Фото | От	 |Протокол	 |Назначение	 |Результат |
 | ------------- |:------------------:|------------- |------------- |------------- |
  |2 | PC-B |	Ping	 |10.30.0.10	 |Сбой |
  |2 | PC-B |	Ping |	10.20.0.1	 |Сбой |
  |2  |PC-B |	Ping	 |172.16.1.1 |	Успех |
+
+ 
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/foto2.jpg?raw=true)
