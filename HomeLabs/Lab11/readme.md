@@ -312,7 +312,7 @@ R1(config)#ip http authentication local
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/topo3.jpg?raw=true)
 
 ##
-### Честь 6. Проверка подключения.
+### Часть 6. Проверка подключения.
 #### Шаг 1. Настройте узлы ПК.
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/ip.jpg?raw=true)
 
@@ -330,3 +330,46 @@ R1(config)#ip http authentication local
 | PC-B	| SSH| 	10.20.0.1| 
 | PC-B	| SSH	| 172.16.1.1| 
 
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/ping1.jpg?raw=true)
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/ping%202.jpg?raw=true)
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/https1.jpg?raw=true)
+
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/ssh1.jpg?raw=true)
+
+##
+### Часть 7.	Настройка и проверка списков контроля доступа (ACL).
+#### Шаг 1. Проанализируйте требования к сети и политике безопасности для планирования реализации ACL.
+#### Шаг 2. Разработка и применение расширенных списков доступа, которые будут соответствовать требованиям политики безопасности.
+
+__Политика1.__ Сеть Sales не может использовать SSH в сети Management (но в другие сети SSH разрешен). <br>
+```
+R1(config)#ip access-list extended Rule1
+R1(config-ext-nacl)#remark No SHH in Management from sales
+R1(config-ext-nacl)#10 deny tcp 10.40.0.0 0.0.0.255 10.20.0.3 0.0.0.255 eq 22
+R1(config-ext-nacl)#50 permit tcp 10.40.0.0 0.0.0.255 any eq 22
+```
+
+__Политика 2.__ Сеть Sales не имеет доступа к IP-адресам в сети Management с помощью любого веб-протокола (HTTP/HTTPS). Сеть Sales также не имеет доступа к интерфейсам R1 с помощью любого веб-протокола. Разрешён весь другой веб-трафик (обратите внимание — Сеть Sales  может получить доступ к интерфейсу Loopback 1 на R1).
+```
+Сеть Sales не имеет доступа к IP-адресам в сети Management с помощью любого веб-протокола
+
+R1(config-ext-nacl)#20 deny tcp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 eq 80
+R1(config-ext-nacl)#30 deny tcp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 eq 443
+
+
+Сеть Sales также не имеет доступа к интерфейсам R1 с помощью любого веб-протокола
+
+R1(config-ext-nacl)#33 deny tcp 10.40.0.0 0.0.0.255 host 10.20.0.1 eq 80
+R1(config-ext-nacl)#35 deny tcp 10.40.0.0 0.0.0.255 host 10.20.0.1 eq 443
+R1(config-ext-nacl)#37 deny tcp 10.40.0.0 0.0.0.255 host 10.30.0.1 eq 80
+R1(config-ext-nacl)#38 deny tcp 10.40.0.0 0.0.0.255 host 10.30.0.1 eq 443
+R1(config-ext-nacl)#39 deny tcp 10.40.0.0 0.0.0.255 host 10.40.0.1 eq 80
+R1(config-ext-nacl)#40 deny tcp 10.40.0.0 0.0.0.255 host 10.40.0.1 eq 443
+
+Разрешён весь другой веб-трафик (обратите внимание — Сеть Sales  может получить доступ к интерфейсу Loopback 1 на R1)
+51 permit tcp 10.40.0.0 0.0.0.255 any
+```
+
+__Политика 3.__ Сеть Sales не может отправлять эхо-запросы ICMP в сети Operations или Management. Разрешены эхо-запросы ICMP к другим адресатам. 
