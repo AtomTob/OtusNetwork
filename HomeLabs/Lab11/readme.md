@@ -233,5 +233,68 @@ Fa0/1       20,30,40,1000
 ##
 ### Часть 4.	Настройте маршрутизацию.
 #### Шаг 1. Настройка маршрутизации между сетями VLAN на R1.
+> a.	Активируйте интерфейс G0/0/1 на маршрутизаторе.<br>
+> b.	Настройте подинтерфейсы для каждой VLAN, как указано в таблице IP-адресации. Все подинтерфейсы используют инкапсуляцию 802.1Q. Убедитесь, что подинтерфейс для собственной VLAN не имеет назначенного IP-адреса. Включите описание для каждого подинтерфейса.<br>
+> c.	Настройте интерфейс Loopback 1 на R1 с адресацией из приведенной выше таблицы.<br>
+> d.	С помощью команды __show ip interface brief__ проверьте конфигурацию подынтерфейса.<br>
 
+```
+R1(config)#int g0/1.20
+R1(config-subif)#encapsulation dot1Q 20
+R1(config-subif)#desc Management
+R1(config-subif)#ip add 10.20.0.1 255.255.255.0 
+R1(config-subif)#ex
+R1(config)#int g0/1.30
+R1(config-subif)#encapsulation dot1Q 30
+R1(config-subif)#desc Operations
+R1(config-subif)#ip add 10.30.0.1 255.255.255.0
+R1(config-subif)#ex
+R1(config)#int g0/1.40
+R1(config-subif)#encapsulation dot1Q 40
+R1(config-subif)#ip add 10.40.0.1 255.255.255.0
+R1(config-subif)#ex
+R1(config)#int g0/1.1000
+R1(config-subif)#desc NativeVlan
+R1(config-subif)#encap dot 1000 native
+R1(config-subif)#ex
+R1(config)#int l1
+R1(config-if)#ip add 172.16.1.1 255.255.255.0
 
+R1#sh ip int br
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0     unassigned      YES unset  administratively down down 
+GigabitEthernet0/1     unassigned      YES unset  up                    up 
+GigabitEthernet0/1.20  10.20.0.1       YES manual up                    up 
+GigabitEthernet0/1.30  10.30.0.1       YES manual up                    up 
+GigabitEthernet0/1.40  10.40.0.1       YES manual up                    up 
+GigabitEthernet0/1.1000unassigned      YES unset  up                    up 
+Loopback1              172.16.1.1      YES manual up                    up 
+Vlan1                  unassigned      YES unset  administratively down down
+```
+##
+#### Шаг 2. Настройка интерфейса R2 g0/0/1 с использованием адреса из таблицы и маршрута по умолчанию с адресом следующего перехода 10.20.0.1
+```
+R2(config)#int g0/1
+R2(config-if)#ip add 10.20.0.4 255.255.255.0
+R2(config-if)#no shut
+R2(config)#ip route 0.0.0.0 0.0.0.0 10.20.0.1
+```
+##
+### Часть 5. Настройте удаленный доступ.
+#### Шаг 1. Настройте все сетевые устройства для базовой поддержки SSH.
+> a.	Создайте локального пользователя с именем пользователя SSHadmin и зашифрованным паролем $cisco123! <br>
+> b.	Используйте ccna-lab.com в качестве доменного имени.<br>
+> c.	Генерируйте криптоключи с помощью 1024 битного модуля.<br>
+> d.	Настройте первые пять линий VTY на каждом устройстве, чтобы поддерживать только SSH-соединения и с локальной аутентификацией.<br>
+
+На всех устройствах выполнен скрипт:
+```
+username SSHadmin privilege 15 password $cisco123!
+ip domain-name ccna-lab.com
+crypto key generate rsa 1024
+line vty 0 4
+transport input ssh
+login local
+```
+##
+#### Шаг 2. Включите защищенные веб-службы с проверкой подлинности на R1.
