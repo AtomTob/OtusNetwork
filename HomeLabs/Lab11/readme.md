@@ -374,8 +374,8 @@ R1(config-ext-nacl)#40 deny tcp 10.40.0.0 0.0.0.255 host 10.40.0.1 eq 443
 ##
 __Политика 3.__ Сеть Sales не может отправлять эхо-запросы ICMP в сети Operations или Management. Разрешены эхо-запросы ICMP к другим адресатам. 
 ```
-R1(config-ext-nacl)#41 deny icmp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 echo 
-R1(config-ext-nacl)#42 deny icmp 10.40.0.0 0.0.0.255 10.30.0.0 0.0.0.255 echo
+R1(config-ext-nacl)#43 deny icmp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 echo 
+R1(config-ext-nacl)#44 deny icmp 10.40.0.0 0.0.0.255 10.30.0.0 0.0.0.255 echo
 R1(config-ext-nacl)#55 permit icmp 10.40.0.0 0.0.0.255 any 
 ```
 
@@ -392,8 +392,8 @@ Extended IP access list Rule1
     38 deny tcp 10.40.0.0 0.0.0.255 host 10.30.0.1 eq 443
     39 deny tcp 10.40.0.0 0.0.0.255 host 10.40.0.1 eq www
     40 deny tcp 10.40.0.0 0.0.0.255 host 10.40.0.1 eq 443
-    41 deny icmp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 echo
-    42 deny icmp 10.40.0.0 0.0.0.255 10.30.0.0 0.0.0.255 echo
+    43 deny icmp 10.40.0.0 0.0.0.255 10.20.0.0 0.0.0.255 echo
+    44 deny icmp 10.40.0.0 0.0.0.255 10.30.0.0 0.0.0.255 echo
     50 permit tcp 10.40.0.0 0.0.0.255 any eq 22
     51 permit tcp 10.40.0.0 0.0.0.255 any
     55 permit icmp 10.40.0.0 0.0.0.255 any
@@ -421,13 +421,12 @@ R1(config-subif)#ip access-group Operations in
 | ------------- |:------------------:|------------- |------------- |------------- |
  |1  |PC-A	 |Ping |	10.40.0.10 |	Сбой |
  |1 | PC-A |	Ping	 |10.20.0.1	 |Успех |
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/foto1.jpg?raw=true)
+
+
+  |Фото | От	 |Протокол	 |Назначение	 |Результат |
+| ------------- |:------------------:|------------- |------------- |------------- |
  |2 | PC-B |	Ping	 |10.30.0.10	 |Сбой |
  |2 | PC-B |	Ping |	10.20.0.1	 |Сбой |
  |2  |PC-B |	Ping	 |172.16.1.1 |	Успех |
- |3  |PC-B	 |HTTPS	 |10.20.0.1 |	Сбой |
- |4  |PC-B	 |HTTPS	 |172.16.1.1	 |Успех |
- |5 | PC-B	 |SSH	 |10.20.0.4	 |Сбой |
- |6 | PC-B	 |SSH |	172.16.1.1 |	Успех |
-
-
- 
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/foto2.jpg?raw=true)
