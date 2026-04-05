@@ -311,4 +311,22 @@ R1(config)#ip http authentication local
 Т.к. в PacketTracer применение данных команд на маршрутизаторе невозможно, добавим сервер к коммутатору S1, назначив ему адрес 10.30.0.11/24 на порту Fa0/7 vlan 30.
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/topo3.jpg?raw=true)
 
+##
+### Честь 6. Проверка подключения.
+#### Шаг 1. Настройте узлы ПК.
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/ip.jpg?raw=true)
+
+#### Шаг 2. Выполните следующие тесты. Эхо запрос должен пройти успешно.
+
+| От	| Протокол	| Назначение| 
+| ------------- |:------------------:|------------- |
+| PC-A	| Ping	| 10.40.0.10| 
+| PC-A	| Ping	| 10.20.0.1| 
+| PC-B	| Ping| 10.30.0.10| 
+| PC-B	| Ping	| 10.20.0.1| 
+| PC-B	| Ping	| 172.16.1.1| 
+| PC-B| 	HTTPS	| 10.20.0.1| 
+| PC-B	| HTTPS	| 172.16.1.1| 
+| PC-B	| SSH| 	10.20.0.1| 
+| PC-B	| SSH	| 172.16.1.1| 
 
