@@ -74,4 +74,54 @@ copy running-config startup-config
 ### Часть 2. Настройка сетей VLAN на коммутаторах.
 ##### Шаг 1. Создайте сети VLAN на коммутаторах.
 > a.	Создайте необходимые VLAN и назовите их на каждом коммутаторе из приведенной выше таблицы.
+```
+vlan 20
+ name Management
+vlan 30
+ name Operations
+vlan 40
+ name Sales
+vlan 999
+ name ParkingLot
+vlan 1000
+ name NativeVlan
+```
 
+> b.	Настройте интерфейс управления и шлюз по умолчанию на каждом коммутаторе, используя информацию об IP-адресе в таблице адресации.
+```
+S1(config)#int vl 20
+S1(config-if)#
+%LINK-5-CHANGED: Interface Vlan20, changed state to up
+S1(config-if)#ip address 10.20.0.2 255.255.255.0
+S1(config-if)#ex
+S1(config)#ip default-gateway 10.20.0.1
+
+S2(config)#int vl 20
+S2(config-if)#
+%LINK-5-CHANGED: Interface Vlan20, changed state to up
+S2(config-if)#ip address 10.20.0.3 255.255.255.0
+S2(config-if)#ex
+S2(config)#ip default-gateway 10.20.0.1
+```
+
+> c.	Назначьте все неиспользуемые порты коммутатора VLAN Parking Lot, настройте их для статического режима доступа и административно деактивируйте их.
+```
+S1(config)#int ran F0/2-4, F0/7-24, G0/1-2
+S1(config-if-range)#switchport mo acc
+S1(config-if-range)#sw acc vl 999
+S1(config-if-range)#shut
+
+S2(config)#int ran F0/2-4, F0/6-17, F0/19-24, G0/1-2
+S2(config-if-range)#switchport mo acc
+S2(config-if-range)#sw acc vl 999
+S2(config-if-range)#shut
+```
+##
+#### Шаг 2. Назначьте сети VLAN соответствующим интерфейсам коммутатора.
+> a.	Назначьте используемые порты соответствующей VLAN (указанной в таблице VLAN выше) и настройте их для режима статического доступа.
+```
+S1(config)#int f0/5
+S1(config-if)#sw mo acc
+S1(config-if)#sw acc vl 30
+
+```
