@@ -456,3 +456,9 @@ __Неприменимо__
 
  
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/foto4.jpg?raw=true)
+
+
+
+##
+Файл проекта по лабораторной работе [здесь](https://github.com/AtomTob/OtusNetwork/raw/refs/heads/main/HomeLabs/Lab11/files/Lab_11.pkt)
+
