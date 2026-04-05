@@ -291,10 +291,24 @@ R2(config)#ip route 0.0.0.0 0.0.0.0 10.20.0.1
 ```
 username SSHadmin privilege 15 password $cisco123!
 ip domain-name ccna-lab.com
-crypto key generate rsa 1024
+crypto key generate rsa 
+yes
+1024
 line vty 0 4
 transport input ssh
 login local
 ```
 ##
 #### Шаг 2. Включите защищенные веб-службы с проверкой подлинности на R1.
+> a.	Включите сервер HTTPS на R1. <br>
+> b.	Настройте R1 для проверки подлинности пользователей, пытающихся подключиться к веб-серверу.<br>
+```
+R1(config)#ip http secure-server
+% Invalid input detected at '^' marker.
+R1(config)#ip http authentication local
+% Invalid input detected at '^' marker.
+```
+Т.к. в PacketTracer применение данных команд на маршрутизаторе невозможно, добавим сервер к коммутатору S1, назначив ему адрес 10.30.0.11/24 на порту Fa0/7 vlan 30.
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/topo3.jpg?raw=true)
+
+
