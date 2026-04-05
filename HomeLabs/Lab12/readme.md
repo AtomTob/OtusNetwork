@@ -1,7 +1,7 @@
 ## Лабораторная работа - Настройка NAT для IPv4
 
 ### Топология
-![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab12/files/topo1.png?raw=true)
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab12/files/topo1.jpg?raw=true)
 
 ##
 ### Таблица адресации
@@ -16,3 +16,9 @@
 |S2|	VLAN 1	|192.168.1.12|	255.255.255.0|
 |PC-A|	NIC|	192.168.1.2|	255.255.255.0|
 |PC-B	|NIC	|192.168.1.3	|255.255.255.0|
+
+##
+### Часть 1. Создание сети и настройка основных параметров устройства.
+#### Шаг 1. Подключите кабели сети согласно приведенной топологии.
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab12/files/topo2.jpg?raw=true)
+#### Шаг 2. Произведите базовую настройку маршрутизаторов.
