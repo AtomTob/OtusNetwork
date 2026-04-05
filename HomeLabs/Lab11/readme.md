@@ -433,3 +433,26 @@ R1(config-subif)#ip access-group Operations in
 
  
 ![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/foto2.jpg?raw=true)
+
+##
+  |Фото | От	 |Протокол	 |Назначение	 |Результат |
+| ------------- |:------------------:|------------- |------------- |------------- |
+|3 |PC-B	|HTTPS	|10.20.0.1	|Сбой|
+ 
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/foto3.jpg?raw=true)
+
+##
+  |Фото | От	 |Протокол	 |Назначение	 |Результат |
+| ------------- |:------------------:|------------- |------------- |------------- |
+|---| PC-B|	HTTPS|	172.16.1.1	|Успех|
+ 
+__Неприменимо__
+
+##
+  |Фото | От	 |Протокол	 |Назначение	 |Результат |
+| ------------- |:------------------:|------------- |------------- |------------- |
+| 4 |PC-B|	SSH	|10.20.0.4|	Сбой|
+| 4 |PC-B|	SSH	|172.16.1.1	|Успех|
+
+ 
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab11/files/foto4.jpg?raw=true)
