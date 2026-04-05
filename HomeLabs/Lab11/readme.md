@@ -461,4 +461,3 @@ __Неприменимо__
 
 ##
 Файл проекта по лабораторной работе [здесь](https://github.com/AtomTob/OtusNetwork/raw/refs/heads/main/HomeLabs/Lab11/files/Lab_11.pkt)
-
