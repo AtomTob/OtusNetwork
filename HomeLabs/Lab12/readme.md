@@ -66,10 +66,42 @@ R2(config-if)#ip add 209.165.200.1 255.255.255.224
 R2(config)#ip route
 R2(config)#ip route 0.0.0.0 0.0.0.0 209.165.200.230
 ```
+##
+#### Шаг 3. Настройте базовые параметры каждого коммутатора.
+```
+Switch(config)#hostname S1
+S1(config)#no ip domain-lookup
+S1(config)#enable secret 0 class
+S1(config)#line con 0
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+S1(config)#line vty 0 15
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+S1(config)#service password-encryption
+S1(config)#banner motd ^C!!!!!!!!!!!!enter only for MA, no MAX or MAXIM!!!!!!^C
+S1(config)#clock timezone EKB 5 0
+S1(config)#ip domain-name home.local 
+S1(config)#crypto key generate rsa general-keys modulus 2048 
+S1(config)#ip ssh version 2 
+S1(config)#username admin secret 5 $1$mERr$qJb.eHvBN7S590aq.dpRL. 
+S1(config)#line vty 0 4 
+S1(config-line)#transport input ssh 
+S1(config-line)#login local 
+S1(config-line)#exit
+S1(config)#exit
+S1#clock set 21:00:00 24 march 2026
+S1(config)#int vl1
+S1(config-if)#ip address 192.168.1.11 255.255.255.0
+S1(config-if)#no shut
+S1(config)#int ran Fa0/2-4, Fa0/7-24
+S1(config-if-range)#shut
 
-
-
-
-
-
+S2(config)#int vl1
+S2(config-if)#ip address 192.168.1.12 255.255.255.0
+S2(config-if)#no shut
+S2(config)#int ran Fa0/2-17, Fa0/19-24
+S2(config-if-range)#shut
 ```
