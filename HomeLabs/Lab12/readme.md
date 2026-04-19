@@ -105,3 +105,83 @@ S2(config-if)#no shut
 S2(config)#int ran Fa0/2-17, Fa0/19-24
 S2(config-if-range)#shut
 ```
+
+##
+### Часть 2. Настройка и проверка NAT для IPv4.
+#### Шаг 1. Настройте NAT на R1, используя пул из трех адресов 209.165.200.226-209.165.200.228. 
+> a.	Настройте простой список доступа, который определяет, какие хосты будут разрешены для трансляции. В этом случае все устройства в локальной сети R1 имеют право на трансляцию.
+```
+R1(config)#access-list 1 permit 192.168.1.0 0.0.0.255
+```
+> b.	Создайте пул NAT и укажите ему имя и диапазон используемых адресов.
+```
+R1(config)#ip nat pool PUBLIC_ACCESS 209.165.200.226 209.165.200.228 netmask 255.255.255.248 
+```
+> c.	Настройте перевод, связывая ACL и пул с процессом преобразования.
+```
+R1(config)#ip nat inside source list 1 pool PUBLIC_ACCESS
+```
+> d.	Задайте внутренний (inside) интерфейс. 
+```
+R1(config)#int g 0/1
+R1(config-if)#ip nat inside
+```
+> e.	Определите внешний (outside) интерфейс.
+```
+R1(config)#int g0/0
+R1(config-if)#ip nat outside
+```
+
+##
+#### Шаг 2. Проверьте и проверьте конфигурацию. 
+> a.	С PC-B, запустите эхо-запрос интерфейса Lo1 (209.165.200.1) на R2. <br>
+Изначально запрос не проходил. В процессе трабл-шутинга было выявлено, что не хватало объявления шлюза по умолчанию по коммутаторах и маршрута на маршрутизаторах.
+```
+R1(config)#ip route 0.0.0.0 0.0.0.0 209.165.200.225
+R2(config)#ip route 0.0.0.0 0.0.0.0 209.165.200.230
+S2(config)#ip default-gateway 192.168.1.1
+S1(config)#ip default-gateway 192.168.1.1
+
+C:\>ping 209.165.200.1
+Pinging 209.165.200.1 with 32 bytes of data:
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+
+Ping statistics for 209.165.200.1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 0ms, Average = 0ms
+```
+На R1 отобразите таблицу NAT на R1 с помощью команды __show ip nat translations__. <br>
+```
+R1#sh ip nat tran
+Pro  Inside global       Inside local       Outside local      Outside global
+icmp 209.165.200.226:42  192.168.1.3:42     209.165.200.1:42   209.165.200.1:42
+icmp 209.165.200.226:43  192.168.1.3:43     209.165.200.1:43   209.165.200.1:43
+icmp 209.165.200.226:44  192.168.1.3:44     209.165.200.1:44   209.165.200.1:44
+icmp 209.165.200.226:45  192.168.1.3:45     209.165.200.1:45   209.165.200.1:45
+```
+> __Во что был транслирован внутренний локальный адрес PC-B?__ <br>
+В внутренний глобальный адрес 209.165.200.226
+> __Какой тип адреса NAT является переведенным адресом?__ <br>
+Dynamic NAT
+
+> b.	С PC-A, запустите  эхо-запрос интерфейса Lo1 (209.165.200.1) на R2. Если эхо-запрос не прошел, выполните отладку. На R1 отобразите таблицу NAT на R1 с помощью команды show ip nat translations. <br>
+```
+C:\>ping 209.165.200.1
+
+Pinging 209.165.200.1 with 32 bytes of data:
+
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+Reply from 209.165.200.1: bytes=32 time<1ms TTL=254
+
+Ping statistics for 209.165.200.1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 0ms, Average = 0ms
+```
+
