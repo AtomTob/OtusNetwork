@@ -252,7 +252,7 @@ R1#sh clo
 ```
 | Дата	| Время	| Часовой пояс| 	Источник времени| 
 | ------------- |:------------------:|------------- |------------- |	
-|01-03-1993 | 01:56:12.938 | UTC (+0) | Зашитая логика | 
+|01-03-1993 | 01:56:12.938 | UTC (+0) | hardware calendar | 
 
 #### Шаг 2. Установите время.
 ```
@@ -272,3 +272,47 @@ R1(config)#ntp master 4
 |  S1  |01-03-1993 | 0:28:23.184 | UTC (+0) |
 |  S2  |01-03-1993 | 0:29:9.519 | UTC (+0) |
 
+> b.	Настройте S1 и S2 в качестве клиентов NTP. Используйте соответствующие команды NTP для получения времени от интерфейса G0/0/1 R1, а также для периодического обновления календаря или аппаратных часов коммутатора.
+```
+S1(config)# ntp server 10.22.0.1
+
+S2(config)# ntp server 10.22.0.1
+```
+#### Шаг 5. Проверьте настройку NTP.
+> a.	Используйте соответствующую команду show , чтобы убедиться, что S1 и S2 синхронизированы с R1. <br>
+> b.	Выполните соответствующую команду на S1 и S2, чтобы просмотреть настроенное время и сравнить ранее записанное время.<br>
+
+```
+S1#sh ntp sta
+Clock is synchronized, stratum 5, reference is 10.22.0.1
+nominal freq is 250.0000 Hz, actual freq is 249.9990 Hz, precision is 2**24
+reference time is ED6704A3.00000203 (23:26:27.515 UTC Sun Apr 19 2026)
+clock offset is 0.00 msec, root delay is 0.00  msec
+root dispersion is 12.09 msec, peer dispersion is 0.12 msec.
+loopfilter state is 'CTRL' (Normal Controlled Loop), drift is - 0.000001193 s/s system poll interval is 4, last update was 9 sec ago.
+
+S1#sh clo
+23:26:45.913 UTC Sun Apr 19 2026
+
+
+S2#sh ntp status 
+Clock is synchronized, stratum 5, reference is 10.22.0.1
+nominal freq is 250.0000 Hz, actual freq is 249.9990 Hz, precision is 2**24
+reference time is ED670632.00000111 (23:33:6.273 UTC Sun Apr 19 2026)
+clock offset is 0.00 msec, root delay is 0.00  msec
+root dispersion is 17.08 msec, peer dispersion is 0.12 msec.
+loopfilter state is 'CTRL' (Normal Controlled Loop), drift is - 0.000001193 s/s system poll interval is 4, last update was 7 sec ago.
+
+S2#sh clo
+23:33:23.439 UTC Sun Apr 19 2026
+```
+
+
+#### Вопрос для повторения
+> Для каких интерфейсов в пределах сети не следует использовать протоколы обнаружения сетевых ресурсов? Поясните ответ.
+
+Не следует использовать протоколы обнаружения на транковых портах (интерфейсы соединения коммутаторов/маршрутизаторов) и "пограничных" - соединяющие соседние ЛВС. <br>
+Причина - по этим интерфейсам потенциальный злоумышленник, при успешном взломе одного коммутатора, может узнать версии ОС соседних устройств, топологию сети и пр. и взломать их через уязвимости.
+
+##
+Файл проекта по лабораторной работе [здесь](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab13/files/Lab_13.pkt)
