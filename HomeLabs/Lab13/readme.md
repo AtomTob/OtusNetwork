@@ -1,7 +1,7 @@
 ## Лабораторная работа - Настройка протоколов CDP, LLDP и NTP
 
 ### Топология
-![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab13/files/topo1.png?raw=true)
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab13/files/topo.png?raw=true)
 
 ##
 ### Таблица адресации
@@ -17,4 +17,4 @@
 ### Часть 1. Создание сети и настройка основных параметров устройства.
 #### Шаг 1. Создайте сеть согласно топологии.
 
-![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab13/files/topo2.jpg?raw=true)
+![alt-текст](https://github.com/AtomTob/OtusNetwork/blob/main/HomeLabs/Lab13/files/Topo2.jpg?raw=true)
