@@ -167,3 +167,89 @@ S2(config)#no cdp run
 ##
 ### Часть 3. Обнаружение сетевых ресурсов с помощью протокола LLDP
 > a.	Введите соответствующую команду lldp, чтобы включить LLDP на всех устройствах в топологии.
+```
+R1(config)#lldp run
+S1(config)#lldp run
+S2(config)#lldp run
+```
+
+> b.	На S1 выполните соответствующую команду lldp, чтобы предоставить подробную информацию о S2.
+```
+S1#show lldp entry S2
+             ^
+% Invalid input detected at '^' marker.
+
+S1#show lldp neighbors detail 
+------------------------------------------------
+Chassis id: 0000.0C08.3B01
+Port id: Fa0/1
+Port Description: FastEthernet0/1
+System Name: S2
+System Description:
+Cisco IOS Software, C2960 Software (C2960-LANBASEK9-M), Version 15.0(2)SE4, RELEASE SOFTWARE (fc1)
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2013 by Cisco Systems, Inc.
+Compiled Wed 26-Jun-13 02:49 by mnguyen
+Time remaining: 90 seconds
+System Capabilities: B
+Enabled Capabilities: B
+Management Addresses - not advertised
+Auto Negotiation - supported, enabled
+Physical media capabilities:
+    100baseT(FD)
+    100baseT(HD)
+    1000baseT(HD)
+Media Attachment Unit type: 10
+```
+
+> Что такое chassis ID для коммутатора S2?
+
+Это МАС-адрес интерфейса F0/1 коммутатора S2, по которому организовано подключение к коммутатору S1.
+```
+S2#sh int f0/1
+FastEthernet0/1 is up, line protocol is up (connected)
+  Hardware is Lance, address is 0000.0c08.3b01 (bia 0000.0c08.3b01)
+ BW 100000 Kbit, DLY 1000 usec,
+     reliability 255/255, txload 1/255, rxload 1/255
+```
+
+> c.	Соединитесь через консоль на всех устройствах и используйте команды LLDP, необходимые для отображения топологии физической сети только из выходных данных команды show.
+```
+R1#sh lldp neighbors 
+Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+Device ID           Local Intf     Hold-time  Capability      Port ID
+S1                  Gig0/1         120        B               Fa0/5
+Total entries displayed: 1
+
+
+S1#sh lldp nei
+Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+Device ID           Local Intf     Hold-time  Capability      Port ID
+S2                  Fa0/1          120        B               Fa0/1
+R1                  Fa0/5          120        R               Gig0/1
+Total entries displayed: 2
+
+
+S2#sh lldp nei
+Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+Device ID           Local Intf     Hold-time  Capability      Port ID
+S1                  Fa0/1          120        B               Fa0/1
+Total entries displayed: 1
+```
+
+##
+### Часть 4. Настройка NTP.
+#### Шаг 1. Выведите на экран текущее время.
+```
+R1#sh clo
+*1:56:12.938 UTC Mon Mar 1 1993
+```
+| Дата	| Время	| Часовой пояс| 	Источник времени| 
+| ------------- |:------------------:|------------- |------------- |	
+|01-03-1993 | 01:56:12.938 | UTC (+0) | Зашитая логика | 
